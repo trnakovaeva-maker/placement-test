@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALCPT Form 1</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2744;
+    --navy-mid: #1a3a5c;
+    --blue: #2563a8;
+    --accent: #e8a020;
+    --accent-light: #fdf3dc;
+    --green: #1a7a4a;
+    --green-light: #e8f7ef;
+    --red: #b91c1c;
+    --gray-100: #f4f6f9;
+    --gray-200: #e5e9f0;
+    --gray-400: #94a3b8;
+    --gray-600: #4a5568;
+    --gray-800: #1e293b;
+    --white: #ffffff;
+    --radius: 8px;
+    --shadow: 0 2px 12px rgba(15,39,68,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--gray-100); color: var(--gray-800); }
+
+  /* ── STICKY PLAYER ── */
+  .player-bar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: var(--navy);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+    padding: 12px 24px;
+  }
+  .player-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .player-title {
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  .player-title span { color: var(--accent); }
+
+  .player-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+  .btn-playpause {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: var(--navy);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-playpause:hover { background: #d4911a; transform: scale(1.05); }
+  .btn-playpause svg { width: 18px; height: 18px; fill: var(--navy); }
+
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    position: relative;
+    cursor: default;
+  }
+  .progress-played {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.5s linear;
+    pointer-events: none;
+  }
+  .player-time {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .player-status {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  
+  .upload-label:hover { background: rgba(255,255,255,0.18); }
+  .upload-label input { display: none; }
+
+  /* ── MAIN ── */
+  .main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+
+  /* ── PART HEADER ── */
+  .part-header {
+    margin: 32px 0 14px;
+    padding: 10px 16px;
+    background: var(--navy-mid);
+    border-radius: var(--radius);
+    color: var(--white);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    border-left: 4px solid var(--accent);
+  }
+  .part-header:first-child { margin-top: 0; }
+
+  /* ── QUESTION ── */
+  .q-row {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 8px;
+    border-left: 3px solid var(--gray-200);
+    transition: border-color 0.15s;
+  }
+  .q-row:focus-within { border-left-color: var(--blue); }
+
+  .q-inner {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 0;
+  }
+  .q-num {
+    padding: 14px 0 14px 14px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--gray-400);
+    line-height: 1.6;
+  }
+  .q-body { padding: 14px 16px 14px 0; }
+  .q-stem {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--gray-800);
+    margin-bottom: 10px;
+  }
+  .q-stem strong { color: var(--navy); }
+
+  /* For audio questions — no stem shown, just options */
+  .q-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .q-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1.5px solid var(--gray-200);
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--gray-700);
+    transition: border-color 0.12s, background 0.12s;
+    user-select: none;
+  }
+  .q-option:hover { border-color: var(--blue); background: #f0f6ff; }
+  .q-option input[type=radio] { display: none; }
+  .q-option.chosen { border-color: var(--blue); background: #eef5ff; }
+  .q-option.chosen .opt-letter { background: var(--blue); color: var(--white); }
+  .opt-letter {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.7rem;
+    color: var(--gray-600);
+    flex-shrink: 0;
+    transition: background 0.12s, color 0.12s;
+  }
+
+  /* ── RESULTS (hidden until submit) ── */
+  .q-row.show-result.correct { border-left-color: var(--green); }
+  .q-row.show-result.wrong { border-left-color: var(--red); }
+  .q-option.show-correct { border-color: var(--green); background: var(--green-light); }
+  .q-option.show-correct .opt-letter { background: var(--green); color: var(--white); }
+  .q-option.show-wrong { border-color: var(--red); background: #fef2f2; }
+  .q-option.show-wrong .opt-letter { background: var(--red); color: var(--white); }
+  .q-explanation {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--gray-100);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--gray-600);
+    border-top: 1px solid var(--gray-200);
+  }
+  .q-explanation .cz-ex { color: var(--blue); font-weight: 600; display: block; margin-top: 3px; }
+  .show-result .q-explanation { display: block; }
+
+  /* ── SUBMIT / SCORE ── */
+  .submit-area {
+    text-align: center;
+    margin-top: 36px;
+  }
+  .answered-info {
+    font-size: 0.82rem;
+    color: var(--gray-400);
+    margin-bottom: 14px;
+  }
+  .btn-submit {
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius);
+    padding: 13px 36px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--navy);
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .btn-submit:hover { background: #d4911a; transform: translateY(-1px); }
+
+  .score-banner {
+    display: none;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .score-banner .big {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .score-banner .big span { font-size: 1.6rem; color: rgba(255,255,255,0.4); }
+  .score-banner .sub { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 6px; }
+  .score-parts {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+  .score-part .val { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--white); }
+  .score-part .lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.4); }
+
+  .btn-retry {
+    margin-top: 16px;
+    background: none;
+    border: 2px solid var(--navy);
+    border-radius: var(--radius);
+    padding: 10px 24px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--navy);
+    transition: all 0.15s;
+  }
+  .btn-retry:hover { background: var(--navy); color: var(--white); }
+
+  @media (max-width: 560px) {
+    .q-options { grid-template-columns: 1fr; }
+    .player-title { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── STICKY PLAYER ── -->
+<div class="player-bar">
+  <div class="player-inner">
+    <div class="player-title">ALCPT <span>Form 1</span></div>
+    <div class="player-controls">
+      <button class="btn-playpause" id="btnPlay" onclick="togglePlay()" title="Play / Pause">
+        <svg id="iconPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="iconPause" viewBox="0 0 24 24" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <div class="progress-track">
+        <div class="progress-played" id="progressPlayed"></div>
+      </div>
+      <div class="player-time" id="playerTime">0:00 / 0:00</div>
+      <div class="player-status" id="playerStatus">Připraveno</div>
+    </div>
+    
+  </div>
+</div>
+
+<div class="main" id="mainContent">
+  <!-- score banner (shown after submit) -->
+  <div class="score-banner" id="scoreBanner">
+    <div class="big" id="scoreBig"></div>
+    <div class="sub" id="scoreSub"></div>
+    <div class="score-parts" id="scoreParts"></div>
+    <button class="btn-retry" onclick="retryTest()">Zkusit znovu</button>
+  </div>
+  <!-- questions injected here -->
+</div>
+
+<div class="submit-area" id="submitArea">
+  <div class="answered-info" id="answeredInfo">0 / 100 zodpovězeno</div>
+  <button class="btn-submit" id="btnSubmit" onclick="trySubmit()">Odeslat test ✓</button>
+</div>
+
+<audio id="audioEl" src="ALCPT01.MP3"></audio>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════════════
+const questions = [
+  {id:1,part:"I",options:["He will go.","He can't go.","He finished his studies.","He likes to study."],correct:1,expl:"'I'd like to, but...' vyjadřuje, že student chce jít, ale nemůže."},
+  {id:2,part:"I",options:["at 1005","at 1315","at 1515","at 1616"],correct:1,expl:"Vojenský čas 1315 = 13:15 (1:15 odpoledne)."},
+  {id:3,part:"I",options:["put it on the desk","look up words in it","put a new cover on it","correct it"],correct:1,expl:"'Consult your dictionary' = vyhledat slova ve slovníku. Správná parafráze: 'look up words in it'."},
+  {id:4,part:"I",options:["for measuring lengths","for painting boards","for holding objects","for sharpening tools"],correct:2,expl:"'Bench vice' (svěrák) = nástroj na pevné uchycení předmětů při práci."},
+  {id:5,part:"I",options:["buy a plane","sell a plane","travel on a plane","find an old plane"],correct:2,expl:"'Going to New York by plane' = cestovat letadlem. Správná parafráze: 'travel on a plane'."},
+  {id:6,part:"I",options:["red","wool","rain","small"],correct:0,expl:"Otázka se ptá na barvu ('color'). Jediná barva mezi možnostmi je 'red'."},
+  {id:7,part:"I",options:["a list of telephone numbers","a new medicine","a group of workers","a place to eat"],correct:3,expl:"'Snack bar' = bufet, místo kde se jí."},
+  {id:8,part:"I",options:["April","June","August","September"],correct:2,expl:"Měsíc hned po červenci (July) je srpen (August)."},
+  {id:9,part:"I",options:["He has a stomach-ache.","He has a toothache.","His feet hurt him.","His eyes hurt him."],correct:1,expl:"Zubař (dentist) se stará o zuby. Nejpravděpodobnější problém: bolest zubů."},
+  {id:10,part:"I",options:["lesson one","lesson two","they are the same.","both are difficult."],correct:0,expl:"'Easier' = méně obtížný. Lekce jedna je jednodušší — 'less difficult' = easier."},
+  {id:11,part:"I",options:["your family name","your father's name","your mother's name","your first name"],correct:3,expl:"'Given name' = křestní jméno. Synonymum: 'first name'."},
+  {id:12,part:"I",options:["cleaning","price tags","buttons","changes"],correct:3,expl:"'Alterations' (v kontextu oděvnictví) = úpravy/změny. Správná parafráze: 'changes'."},
+  {id:13,part:"I",options:["close the door","follow him","answer it","look at them"],correct:2,expl:"Když se učitel zeptá, správná reakce je odpovědět: 'answer it'."},
+  {id:14,part:"I",options:["They will fly.","They will walk.","They will run.","They will drive."],correct:0,expl:"'By jet' = proudovým letadlem. Způsob dopravy: letět."},
+  {id:15,part:"I",options:["yesterday","on Saturday","with George","at the office"],correct:1,expl:"Zítra po pátku (Friday) je sobota (Saturday)."},
+  {id:16,part:"I",options:["to board the ship","to get a haircut","to see the factory","to meet his friend's plane"],correct:3,expl:"Na letiště se chodí kvůli letadlům. Logická odpověď: 'to meet his friend's plane'."},
+  {id:17,part:"I",options:["stamping packages","depositing letters","filing envelopes","collecting stamps"],correct:1,expl:"'Mailbox' (poštovní schránka) slouží k odesílání dopisů. Správná odpověď: 'depositing letters'."},
+  {id:18,part:"I",options:["the ability to speed up","the color of the car","the slowing-down action","the stopping action"],correct:0,expl:"'Acceleration' = zrychlení. Správná parafráze: 'the ability to speed up'."},
+  {id:19,part:"I",options:["in a large house","in a small house","in a crowded house","in a busy house"],correct:0,expl:"'Spacious' = prostorný, velký. Správná parafráze: 'in a large house'."},
+  {id:20,part:"I",options:["a directional light","a new headlight","a spare tire","a warning device"],correct:3,expl:"'Horn' (klakson) = varovné zvukové zařízení."},
+  {id:21,part:"I",options:["like him","remember him","contact him","forget him"],correct:2,expl:"Idiom 'get in touch with' = kontaktovat. Správná parafráze: 'contact him'."},
+  {id:22,part:"I",options:["He got it at a store.","He read it slowly.","He looked at it for a long time.","He read it quickly."],correct:3,expl:"'Glanced through' = rychle prolétl očima. Správná parafráze: 'He read it quickly'."},
+  {id:23,part:"I",options:["The wire is not good.","The wire is not covered for protection.","The wire is not carrying electricity.","The wire is not visible."],correct:1,expl:"'Insulated' = izolovaný. Správná parafráze: 'not covered for protection'."},
+  {id:24,part:"I",options:["Who used this book first?","Who wants to use this book?","Who used this book frequently?","Who will be using this book?"],correct:0,expl:"'Originally' = původně, jako první. Správná parafráze: 'Who used this book first?'"},
+  {id:25,part:"I",options:["Classes begin at eight o'clock.","Only young children go to school there.","The school is three miles from here.","The school is closed for the day."],correct:2,expl:"Otázka 'How far?' se ptá na vzdálenost. Správná odpověď: 'three miles from here'."},
+  {id:26,part:"II",options:["There are many people downtown.","Many people are walking on Saturdays.","There are many cars on the streets.","There are many lights on the streets."],correct:2,expl:"'Heavy traffic' = hustý provoz (hodně aut). Správná parafráze: 'There are many cars on the streets'."},
+  {id:27,part:"II",options:["It can't be seen.","It is cool.","It is not humid.","It is warm."],correct:0,expl:"'Invisible' = neviditelný. Správná parafráze: 'It can't be seen'."},
+  {id:28,part:"II",options:["He saw it.","He made it.","He moved it.","He cut it."],correct:0,expl:"'Noticed' = všiml si, zpozoroval. Správná parafráze: 'He saw it'."},
+  {id:29,part:"II",options:["It is easily bent.","It is very hard.","It is bright.","It is heavy."],correct:0,expl:"'Flexible' = ohebný, pružný. Správná parafráze: 'It is easily bent'."},
+  {id:30,part:"II",options:["It plays too loudly.","It needs repair.","It's in good condition.","It's a cheap radio."],correct:2,expl:"'Functions properly' = správně funguje. Správná parafráze: 'It's in good condition'."},
+  {id:31,part:"II",options:["He is well known.","He is not known.","He does not know anyone.","He is a dangerous person."],correct:0,expl:"'Famous' = slavný, dobře známý. Správná parafráze: 'He is well known'."},
+  {id:32,part:"II",options:["He left a new student in class.","He found a new student in class.","He registered a new student.","He presented a new student."],correct:3,expl:"'Introduced' = představil, uvedl. Správná parafráze: 'He presented a new student'."},
+  {id:33,part:"II",options:["He is driving nails in the board.","He is making holes in it.","He is sawing the board.","He is plugging holes."],correct:1,expl:"'Drilling' = vrtat. Výsledek vrtání: díry. Správná parafráze: 'He is making holes in it'."},
+  {id:34,part:"II",options:["He hears a highway noise.","He hears an unfamiliar noise.","He hears a familiar noise.","He hears a low sound."],correct:1,expl:"'Strange' = neznámý, cizí. Synonymum: 'unfamiliar'."},
+  {id:35,part:"II",options:["I want to sell this car.","I will buy this car.","I will follow this car.","I have bought this car."],correct:1,expl:"'Purchase' = koupit. Správná parafráze: 'I will buy this car'."},
+  {id:36,part:"II",options:["Bill called John.","Bill hurt John.","Bill telephoned John.","Bill met John."],correct:3,expl:"Idiom 'ran into' = náhodně potkal. Správná parafráze: 'Bill met John'."},
+  {id:37,part:"II",options:["The lights are not working properly.","They are colored.","The lights are turned off completely.","They are going on and off."],correct:3,expl:"'Blinking' = blikat. Správná parafráze: 'going on and off'."},
+  {id:38,part:"II",options:["We eat different kinds of vegetables daily.","We always eat the same vegetables.","We eat vegetables with our meat every day.","We eat only one vegetable every day."],correct:0,expl:"'A variety of' = různé druhy. Správná parafráze: 'different kinds of vegetables daily'."},
+  {id:39,part:"II",options:["There were many tickets for sale.","We were lucky to get them.","We could not get the tickets.","There were no more games."],correct:1,expl:"'Fortunate' = šťastný, mající štěstí. Synonymum: 'lucky'."},
+  {id:40,part:"II",options:["The airlines pay him for flying.","He flies for the Air Force.","He flies for sport.","He sells airplanes."],correct:0,expl:"'Commercial pilot' = komerční pilot. Správná parafráze: 'The airlines pay him for flying'."},
+  {id:41,part:"II",options:["He is afraid of work.","He likes to work.","He works slowly.","He is a poor worker."],correct:1,expl:"'Eager' = nadšený, dychtivý. Správná parafráze: 'He likes to work'."},
+  {id:42,part:"II",options:["He left a message for them.","He saw them on the bus.","He visited them.","He wrote them some letters."],correct:2,expl:"Idiom 'looked up' (osoby) = navštívil je. Správná parafráze: 'He visited them'."},
+  {id:43,part:"II",options:["I'm old.","I'm not angry.","I'm rich.","I'm not strong."],correct:3,expl:"'Weak' = slabý. Správná parafráze: 'I'm not strong'."},
+  {id:44,part:"II",options:["I'll ring the door bell.","I'll visit you.","I'll call on you.","I'll telephone you."],correct:3,expl:"Idiom 'give someone a ring' = zavolat telefonem. Správná parafráze: 'I'll telephone you'."},
+  {id:45,part:"II",options:["He mailed a letter.","He and his mother sent a letter.","His mother sent him a letter.","The letter was written by his mother."],correct:0,expl:"'Sent a letter' = odeslal dopis. Správná parafráze: 'He mailed a letter'."},
+  {id:46,part:"II",options:["He passed it easily.","He wasn't successful.","He hasn't taken it yet.","He cheated on it."],correct:1,expl:"'Failed' = neuspěl, propadl. Správná parafráze: 'He wasn't successful'."},
+  {id:47,part:"II",options:["He got some stamps.","He deposited some money.","He mailed his money order.","He obtained some money."],correct:3,expl:"'Cashed a money order' = proplatil poukázku. Správná parafráze: 'He obtained some money'."},
+  {id:48,part:"II",options:["It is broken.","It is polished.","It is not straight.","It is insulated."],correct:2,expl:"'Twisted' = zkroucený. Správná parafráze: 'It is not straight'."},
+  {id:49,part:"II",options:["It looks very easy.","I solved it easily.","I don't understand it.","It's not too difficult."],correct:2,expl:"'Looks like a puzzle' = je pro mě záhadou. Správná parafráze: 'I don't understand it'."},
+  {id:50,part:"II",options:["He wants to sell some soap.","He wants to give me some soap.","He wants some soap from me.","He wants no soap from anyone."],correct:2,expl:"'Give me some soap' = žádá mě o mýdlo. Správná parafráze: 'He wants some soap from me'."},
+  {id:51,part:"III",options:["to quit smoking","to reduce his smoking","that he didn't need to smoke regularly","that he could continue smoking"],correct:0,expl:"Idiom 'cut out' = přestat úplně. 'Cut out smoking' = přestat kouřit."},
+  {id:52,part:"III",options:["She likes roller skating better.","She has no choice.","She prefers the movies.","She doesn't like either one."],correct:2,expl:"'I'd rather go to the movies' = raději půjdu do kina. Správná parafráze: 'She prefers the movies'."},
+  {id:53,part:"III",options:["He is very unhappy with his studies.","He has no great interest in his studies.","He wants to change courses.","He is very interested in his studies."],correct:3,expl:"'Highly motivated' = velmi motivovaný. Správná parafráze: 'He is very interested in his studies'."},
+  {id:54,part:"III",options:["He would repair it, but he wouldn't replace it.","He wouldn't replace or repair it.","He would replace it rather than repair it.","He would repair it and replace it."],correct:2,expl:"'Instead of repairing' = místo opravení. Správná parafráze: 'replace it rather than repair it'."},
+  {id:55,part:"III",options:["It will stay in good condition.","It will decay quickly.","It will be safe to eat.","It will remain unchanged."],correct:1,expl:"'Spoils easily' = rychle se kazí. Správná parafráze: 'It will decay quickly'."},
+  {id:56,part:"III",options:["a happy one","an unpleasant one","an easy one","a strange one"],correct:1,expl:"'Painful experience' = bolestná/nepříjemná zkušenost. Správná parafráze: 'an unpleasant one'."},
+  {id:57,part:"III",options:["He has bacon and eggs every day.","He sometimes has bacon and eggs.","He doesn't eat bacon and eggs.","He always has bacon and eggs."],correct:1,expl:"'Occasionally' = občas, někdy. Správná parafráze: 'He sometimes has bacon and eggs'."},
+  {id:58,part:"III",options:["He is always tired.","He is never tired.","He is going to get up.","He will be tired soon."],correct:3,expl:"'I'm getting tired' = začínám být unavený (průběhový čas = postupný děj). Správná parafráze: 'He will be tired soon'."},
+  {id:59,part:"III",options:["a mistake","a complaint","a visitor","a rest period"],correct:3,expl:"'Break' (pracovní kontext) = přestávka. Správná odpověď: 'a rest period'."},
+  {id:60,part:"III",options:["He was undecided.","He is going with John.","He decided not to go.","He went to the game."],correct:2,expl:"'Changed my mind' = rozmyslel si to. Nešel. Správná parafráze: 'He decided not to go'."},
+  {id:61,part:"IV",stem:"If he _______ his sweater, he wouldn't have caught a cold.",options:["had worn","wear","wears","wearing"],correct:0,expl:"3. kondicionál vyžaduje had + minulé příčestí: 'had worn'.",czEx:"Kdyby si býval oblékl svetr, nenachladil by se."},
+  {id:62,part:"IV",stem:"He is _______ in the military service.",options:["an officer","officer","a officer","officers"],correct:0,expl:"Před 'officer' (začíná samohláskou) používáme 'an'."},
+  {id:63,part:"IV",stem:"Jones has only a few days to learn to drive.",options:["He will need a lot of time.","He has little time left.","He has studied every day.","He has many days."],correct:1,expl:"'Only a few days' = jen pár dnů — tedy málo času."},
+  {id:64,part:"IV",stem:"Clark has a lot of friends.",options:["no","a few","many","five"],correct:2,expl:"'A lot of' = hodně/mnoho. Správná parafráze: 'many'."},
+  {id:65,part:"IV",stem:"This material can be used for camouflage.",options:["to hide things","for firewood","to mark positions","for lumber"],correct:0,expl:"'Camouflage' = maskování, skrývání."},
+  {id:66,part:"IV",stem:"Ray has an expensive item.",options:["a broken","a bad","a costly","a cheap"],correct:2,expl:"'Expensive' = drahý. Synonymum: 'costly'."},
+  {id:67,part:"IV",stem:"I like to read _______ when I have enough time.",options:["books","the garden","a movie","the piano"],correct:0,expl:"Sloveso 'read' se pojí se slovem 'books'."},
+  {id:68,part:"IV",stem:"John spent his _______ instead of putting it in the bank.",options:["time","gasoline","wallet","money"],correct:3,expl:"Do banky se ukládají peníze. 'Spend' + odkaz na banku = 'money'.",czEx:"John své peníze utratil, místo aby je uložil v bance."},
+  {id:69,part:"IV",stem:"I can't go with you _______ I'm busy.",options:["that","and","but","because"],correct:3,expl:"Druhá věta vyjadřuje důvod. Správná spojka: 'because'.",czEx:"Nemůžu s tebou jít, protože jsem zaneprázdněný."},
+  {id:70,part:"IV",stem:"The air traffic controller announced the arrival of the flight.",options:["landing","captain","leaving","number"],correct:0,expl:"'Arrival' = přistání. Synonymum v leteckém kontextu: 'landing'."},
+  {id:71,part:"IV",stem:"They have been waiting for me _______ 5 o'clock.",options:["during","since","between","for"],correct:1,expl:"S konkrétním časovým bodem (5 o'clock) používáme 'since' (od)."},
+  {id:72,part:"IV",stem:"Most people _______ to read newspapers.",options:["likes","like","are alikes","were alike"],correct:1,expl:"'Most people' je množné číslo — sloveso bez -s: 'like'."},
+  {id:73,part:"IV",stem:"John would have called the police if he _______ the accident.",options:["see","saw","had seen","sees"],correct:2,expl:"3. kondicionál: 'would have + p.p.' vyžaduje 'had + p.p.': 'had seen'.",czEx:"John by byl zavolal policii, kdyby tu nehodu viděl."},
+  {id:74,part:"IV",stem:"I was exhausted after working all day.",options:["feeling fine","active","tired","asleep"],correct:2,expl:"'Exhausted' = vyčerpaný. Synonymum: 'tired'."},
+  {id:75,part:"IV",stem:"He finished _______ his tape.",options:["listened to","listens by","to listen","listening to"],correct:3,expl:"Po 'finish' následuje gerundium (-ing): 'listening to'."},
+  {id:76,part:"IV",stem:"He left the office early _______ he could do some shopping.",options:["if","unless","that","so"],correct:3,expl:"Druhá věta vyjadřuje účel. Správná spojka: 'so (that)' = aby.",czEx:"Odešel z kanceláře dřív, aby mohl jít na nákup."},
+  {id:77,part:"IV",stem:"_______ you mind closing the window?",options:["May","Could","If","Would"],correct:3,expl:"Ustálená zdvořilá prosba: 'Would you mind + gerundium?'"},
+  {id:78,part:"IV",stem:"The name of the last month of the year is _______",options:["Winter","December","past","Saturday"],correct:1,expl:"Poslední měsíc roku je December. 'Winter' je roční období."},
+  {id:79,part:"IV",stem:"The students are all set for the examination.",options:["studying","not there","ready","getting ready"],correct:2,expl:"Idiom 'all set' = připravený. Správná parafráze: 'ready'."},
+  {id:80,part:"IV",stem:"You _______ review this lesson before you take the test.",options:["did","had to","ought to","would"],correct:2,expl:"'Ought to' vyjadřuje doporučení: měl bys.",czEx:"Měl by sis tu lekci zopakovat, než budeš psát ten test."},
+  {id:81,part:"IV",stem:"The conductor _______ the train's departure.",options:["announced","spoke","said","told"],correct:0,expl:"'Announce' se pojí s podstatným jménem jako 'departure'."},
+  {id:82,part:"IV",stem:"He has been studying English _______ four years.",options:["for","since","during","until"],correct:0,expl:"'For' + délka trvání. 'Since' by vyžadovalo konkrétní časový bod."},
+  {id:83,part:"IV",stem:"The visibility was poor yesterday. I _______.",options:["couldn't see very far","didn't have much money","was sick","made a bad grade"],correct:0,expl:"'Poor visibility' = špatná viditelnost. Logicky: 'couldn't see very far'."},
+  {id:84,part:"IV",stem:"Martin wants approximately one hundred fifty dollars for that table. He will accept between _______",options:["$50–$54","$100–$104","$113–$117","$148–$152"],correct:3,expl:"'Approximately $150' — jediný rozsah zahrnující 150 je $148–$152."},
+  {id:85,part:"IV",stem:"I'm going to make reservations for my trip. I'm going to _______.",options:["make some friends","have some food saved","make some money","have a seat saved"],correct:3,expl:"'Make reservations' = rezervovat místo. Správná parafráze: 'have a seat saved'."},
+  {id:86,part:"IV",stem:"A sergeant is a _______.",options:["private","non-commissioned officer","major","commissioned officer"],correct:1,expl:"Seržant = poddůstojník (NCO). 'Private' je vojín, 'major' je štábní důstojník."},
+  {id:87,part:"IV",stem:"Howard finished _______ because he was the fastest.",options:["last","lowest","first","slower"],correct:2,expl:"Nejrychlejší závodník skončí jako první."},
+  {id:88,part:"IV",stem:"Get the red book. _______ is on the shelf.",options:["What","It","She","He"],correct:1,expl:"Zájmeno odkazuje na věc (knihu). Pro věci: 'it'."},
+  {id:89,part:"IV",stem:"You should use your head when driving in heavy traffic.",options:["think intelligently","turn your head often","look straight ahead","keep your head up"],correct:0,expl:"Idiom 'use your head' = přemýšlet, být rozumný."},
+  {id:90,part:"IV",stem:"I am going _______ to buy a new car.",options:["for downtown","downtown","at downtown","into downtown"],correct:1,expl:"'Downtown' je příslovce — nepotřebuje předložku."},
+  {id:91,part:"IV",stem:"The weather is _______ today than it was last night.",options:["good","better","nice","best"],correct:1,expl:"'Than' = komparativ. Komparativ od 'good' je 'better'."},
+  {id:92,part:"IV",stem:"You will learn more if you _______ attention.",options:["make","have","pay","do"],correct:2,expl:"Ustálená kolokace: 'pay attention' = věnovat pozornost."},
+  {id:93,part:"IV",stem:"In the U.S., conversation is _______ proper during meals.",options:["consider","considering","considered","considers"],correct:2,expl:"Pasivní tvar: 'is considered' (je považováno za)."},
+  {id:94,part:"IV",stem:"_______ spears for weapons, the men hunted wild animals.",options:["Will use","Use","To use","Using"],correct:3,expl:"Participiální konstrukce: 'Using spears...' = Používajíce oštěpy..."},
+  {id:95,part:"IV",stem:"Aircraft pilots communicate _______ control towers.",options:["at","for","during","with"],correct:3,expl:"'Communicate' se pojí s předložkou 'with'."},
+  {id:96,part:"IV",stem:"Did the students _______ a lot of homework last night?",options:["has","had","having","have"],correct:3,expl:"Po pomocném 'did' následuje infinitiv bez 'to': 'have'."},
+  {id:97,part:"IV",stem:"Arthur will _______ the water.",options:["write","wash","drink","crack"],correct:2,expl:"Jediné smysluplné sloveso s 'water': 'drink'."},
+  {id:98,part:"IV",stem:"Which sentence has the correct word order?",options:["Steve mailed to her the letter several days ago.","Steve mailed the letter several days ago to her.","Steve mailed the letter to her several days ago.","Steve mailed the several letter to her days ago."],correct:2,expl:"Správný slovosled: sloveso + přímý předmět + nepřímý předmět + příslovce času."},
+  {id:99,part:"IV",stem:"The manager got all the packages _______ this afternoon.",options:["were delivered","delivered","had delivered","will deliver"],correct:1,expl:"Kauzativní vazba 'get + předmět + past participle': nechal doručit balíky."},
+  {id:100,part:"IV",stem:"Food satisfies one of man's basic needs.",options:["questions","hopes","troubles","requirements"],correct:3,expl:"'Needs' = 'requirements' (požadavky). V tomto kontextu jsou synonyma."},
+];
+
+// ══════════════════════════════════════════════════════
+//  BUILD HTML
+// ══════════════════════════════════════════════════════
+const LETTERS = ['A','B','C','D'];
+const partInfo = {
+  "I":  { label: "Část I — Poslech: Otázky (Q1–25)", first: 1 },
+  "II": { label: "Část II — Poslech: Výroky (Q26–50)", first: 26 },
+  "III":{ label: "Část III — Poslech: Dialogy (Q51–60)", first: 51 },
+  "IV": { label: "Část IV — Čtení (Q61–100)", first: 61 },
+};
+
+const main = document.getElementById('mainContent');
+let lastPart = null;
+
+questions.forEach((q, idx) => {
+  if (q.part !== lastPart) {
+    const ph = document.createElement('div');
+    ph.className = 'part-header';
+    ph.textContent = partInfo[q.part].label;
+    main.appendChild(ph);
+    lastPart = q.part;
+  }
+
+  const row = document.createElement('div');
+  row.className = 'q-row';
+  row.id = 'q' + q.id;
+
+  const optionsHtml = q.options.map((opt, i) => `
+    <label class="q-option" id="opt_${q.id}_${i}" onclick="choose(${idx},${i})">
+      <input type="radio" name="q${q.id}" value="${i}">
+      <div class="opt-letter">${LETTERS[i]}</div>
+      <div>${opt}</div>
+    </label>
+  `).join('');
+
+  const stemHtml = q.stem
+    ? `<div class="q-stem">${q.stem.replace(/_+/g,'<strong>_______</strong>')}</div>`
+    : '';
+
+  row.innerHTML = `
+    <div class="q-inner">
+      <div class="q-num">${q.id}</div>
+      <div class="q-body">
+        ${stemHtml}
+        <div class="q-options">${optionsHtml}</div>
+        <div class="q-explanation" id="expl_${q.id}">
+          ${q.expl}
+          ${q.czEx ? `<span class="cz-ex">${q.czEx}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+  main.appendChild(row);
+});
+
+// ══════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════
+const answers = new Array(100).fill(null);
+
+function choose(idx, optIdx) {
+  answers[idx] = optIdx;
+  const q = questions[idx];
+  // update visual
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`opt_${q.id}_${i}`);
+    if (el) el.classList.toggle('chosen', i === optIdx);
+  }
+  // update count
+  const n = answers.filter(a => a !== null).length;
+  document.getElementById('answeredInfo').textContent = n + ' / 100 zodpovězeno';
+}
+
+// ══════════════════════════════════════════════════════
+//  AUDIO
+// ══════════════════════════════════════════════════════
+const audio = document.getElementById('audioEl');
+let audioLoaded = true;
+
+function loadAudio(input) {
+  const file = input.files[0];
+  if (!file) return;
+  audio.src = URL.createObjectURL(file);
+  audio.load();
+  document.getElementById('uploadLabel').innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg> ${file.name}`;
+  audioLoaded = true;
+  document.getElementById('playerStatus').textContent = 'Připraveno';
+  audio.onended = () => {
+    document.getElementById('playerStatus').textContent = 'Hotovo';
+    document.getElementById('iconPlay').style.display = '';
+    document.getElementById('iconPause').style.display = 'none';
+  };
+}
+
+function togglePlay() {
+  if (!audioLoaded) {
+    document.getElementById('playerStatus').textContent = 'Nejprve nahrajte MP3';
+    return;
+  }
+  if (audio.paused) {
+    audio.play();
+    document.getElementById('iconPlay').style.display = 'none';
+    document.getElementById('iconPause').style.display = '';
+    document.getElementById('playerStatus').textContent = 'Přehrávám';
+  } else {
+    audio.pause();
+    document.getElementById('iconPlay').style.display = '';
+    document.getElementById('iconPause').style.display = 'none';
+    document.getElementById('playerStatus').textContent = 'Pozastaveno';
+  }
+}
+
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const pct = audio.currentTime / audio.duration * 100;
+  document.getElementById('progressPlayed').style.width = pct + '%';
+  document.getElementById('playerTime').textContent =
+    fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+});
+
+function fmt(s) {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+// ══════════════════════════════════════════════════════
+//  SUBMIT
+// ══════════════════════════════════════════════════════
+let submitted = false;
+
+function trySubmit() {
+  if (submitted) return;
+  const unanswered = answers.filter(a => a === null).length;
+  if (unanswered > 0) {
+    const btn = document.getElementById('btnSubmit');
+    btn.textContent = `${unanswered} nezodpovězených — odeslat i tak?`;
+    btn.onclick = doSubmit;
+    return;
+  }
+  doSubmit();
+}
+
+function doSubmit() {
+  submitted = true;
+  if (audio) audio.pause();
+
+  // hide submit area
+  document.getElementById('submitArea').style.display = 'none';
+
+  // score
+  const partRanges = {I:[0,24], II:[25,49], III:[50,59], IV:[60,99]};
+  const partNames = {I:"Část I",II:"Část II",III:"Část III",IV:"Část IV"};
+  let total = 0;
+  const partScores = {};
+  for (const [part, [s,e]] of Object.entries(partRanges)) {
+    let c = 0;
+    for (let i = s; i <= e; i++) if (answers[i] === questions[i].correct) c++;
+    partScores[part] = { c, t: e-s+1 };
+    total += c;
+  }
+
+  // show score banner
+  const banner = document.getElementById('scoreBanner');
+  banner.style.display = 'block';
+  document.getElementById('scoreBig').innerHTML = total + '<span> / 100</span>';
+  document.getElementById('scoreSub').textContent = Math.round(total) + '% správně';
+  document.getElementById('scoreParts').innerHTML = Object.entries(partScores).map(([p,{c,t}]) =>
+    `<div class="score-part"><div class="val">${c}/${t}</div><div class="lbl">${partNames[p]}</div></div>`
+  ).join('');
+  banner.scrollIntoView({behavior:'smooth'});
+
+  // show result on each question
+  questions.forEach((q, idx) => {
+    const row = document.getElementById('q' + q.id);
+    const userAns = answers[idx];
+    const correct = q.correct;
+    const isCorrect = userAns === correct;
+
+    row.classList.add('show-result', isCorrect ? 'correct' : 'wrong');
+
+    for (let i = 0; i < 4; i++) {
+      const el = document.getElementById(`opt_${q.id}_${i}`);
+      if (!el) continue;
+      el.style.pointerEvents = 'none';
+      if (i === correct) el.classList.add('show-correct');
+      else if (i === userAns && !isCorrect) el.classList.add('show-wrong');
+    }
+  });
+}
+
+function retryTest() {
+  location.reload();
+}
+</script>
+</body>
+</html>
