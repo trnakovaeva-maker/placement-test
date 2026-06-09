@@ -1159,7 +1159,8 @@ function answer(qid, idx) {
   if (answered[qid] !== undefined) return;
   const q = questions.find(x => x.id === qid);
   if (!q) return;
-  const isCorrect = idx === q.correct;
+  const correctIdx = typeof q.correct === "string" ? "ABCD".indexOf(q.correct) : q.correct;
+  const isCorrect = idx === correctIdx;
   answered[qid] = idx;
   counts[q.part]++; counts.total++;
   if (isCorrect) { scores[q.part]++; scores.total++; }
@@ -1171,7 +1172,7 @@ function answer(qid, idx) {
   q.options.forEach((_, i) => {
     const el = document.getElementById(`opt_${qid}_${i}`);
     el.classList.add('locked');
-    if (i === q.correct) el.classList.add('opt-correct');
+    if (i === correctIdx) el.classList.add('opt-correct');
     else if (i === idx && !isCorrect) el.classList.add('opt-wrong');
   });
 

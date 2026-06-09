@@ -849,10 +849,10 @@ const questions = [
   },
   {
     id: 69, part: "IV", type: "reading",
-    stem: "James would like a new car _____ get.",
-    options: ["for get", "to get", "in getting", "of getting"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Would like + <u>to</u> + infinitiv. James would like <u>to get</u> a new car."}, {"type": "rule", "text": "Would like to + infinitiv = chtěl by (zdvořilé přání). Would like + to-infinitiv je pevná struktura."}, {"type": "distractors", "items": ["a. for get – neexistuje tato struktura", "c. in getting – nesprávná předložka", "d. of getting – nesprávná předložka"]}]
+    stem: "James would like to _______ a new car.",
+    options: ["get", "got", "getting", "gotten"],
+    correct: "A",
+    expl: [{"type": "correct", "text": "Správná odpověď je a. Would like to + <u>základní tvar slovesa</u>: James would like to <u>get</u> a new car."}, {"type": "rule", "text": "Would like to + infinitiv (základní tvar). Po 'to' vždy základní tvar: get (ne got/getting/gotten)."}, {"type": "distractors", "items": ["b. got – minulý čas, po to nelze", "c. getting – gerundium, po to nelze", "d. gotten – past participle, po to nelze"]}]
   },
   {
     id: 70, part: "IV", type: "reading",
@@ -1100,7 +1100,7 @@ function buildTest() {
 
     const opts = q.options.map((opt, i) => {
       const letter = 'ABCD'[i];
-      const display = q.type === 'reading' ? opt : `${letter.toLowerCase()}. ${opt}`;
+      const display = opt;
       return `<div class="q-option" id="opt_${q.id}_${i}" onclick="answer(${q.id},${i})">
         <span class="opt-letter">${letter}</span>
         <span class="opt-text">${display}</span>
@@ -1159,7 +1159,8 @@ function answer(qid, idx) {
   if (answered[qid] !== undefined) return;
   const q = questions.find(x => x.id === qid);
   if (!q) return;
-  const isCorrect = idx === q.correct;
+  const correctIdx = typeof q.correct === "string" ? "ABCD".indexOf(q.correct) : q.correct;
+  const isCorrect = idx === correctIdx;
   answered[qid] = idx;
   counts[q.part]++; counts.total++;
   if (isCorrect) { scores[q.part]++; scores.total++; }
@@ -1171,7 +1172,7 @@ function answer(qid, idx) {
   q.options.forEach((_, i) => {
     const el = document.getElementById(`opt_${qid}_${i}`);
     el.classList.add('locked');
-    if (i === q.correct) el.classList.add('opt-correct');
+    if (i === correctIdx) el.classList.add('opt-correct');
     else if (i === idx && !isCorrect) el.classList.add('opt-wrong');
   });
 
