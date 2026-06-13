@@ -110,6 +110,10 @@
     font-size: 0.7rem; font-weight: 700; padding: 3px 8px;
     border-radius: 4px; white-space: nowrap; margin-top: 2px; flex-shrink: 0;
   }
+  .opt-cz { display: block; font-size: 0.78rem; color: var(--gray-400); margin-top: 2px; }
+  .expl-transcript { background: var(--gray-200); border-radius: 6px; padding: 10px 12px; margin-bottom: 10px; }
+  .expl-tr-en { font-size: 0.85rem; color: var(--gray-800); font-style: italic; margin-bottom: 4px; }
+  .expl-tr-cz { font-size: 0.82rem; color: var(--gray-600); }
   .q-stem { font-size: 0.9rem; color: var(--gray-800); line-height: 1.5; flex: 1; }
 
   /* ── TRANSCRIPT ── */
@@ -216,7 +220,7 @@
       <svg viewBox="0 0 20 20"><path d="M13 4l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       All Forms
     </a>
-    <span class="player-title">ALCPT <span>64</span></span>
+    <span class="player-title">ALCPT <span>26</span></span>
     <div class="player-controls">
       <button class="btn-playpause" id="btnPlay" onclick="togglePlay()" title="Play / Pause">
         <svg id="iconPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -241,842 +245,869 @@
 const questions = [
   {
     id: 1, part: "I", type: "listening",
+    czOptions: ["a tree = strom", "a coat = kabát", "a wall = zeď", "a book = kniha"],
     options: ["a tree", "a coat", "a wall", "a book"],
     correct: 3,
     transcript: "The old man looked at the page. What did he look at?",
     czTranscript: "Starý muž se díval na stránku. Na co se díval?",
     expl: "Správná odpověď je d. Page = stránka (v knize) = a book (kniha).",
-    distractors: [{"l": "A", "t": "a tree", "w": "strom"}, {"l": "B", "t": "a coat", "w": "kabát"}, {"l": "C", "t": "a wall", "w": "zeď"}]
-  },
+    distractors: [
+        {l:"A",t:"a tree",w:"strom"},
+        {l:"B",t:"a coat",w:"kabát"},
+        {l:"C",t:"a wall",w:"zeď"}
+      ]},
   {
     id: 2, part: "I", type: "listening",
+    czOptions: ["She'll need a hammer. = bude potřebovat kladivo.", "She'll need some nickel. = bude potřebovat nikl.", "She'll need a ticket. = bude potřebovat lístek.", "She'll need some sugar. = bude potřebovat cukr."],
     options: ["She'll need a hammer.", "She'll need some nickel.", "She'll need a ticket.", "She'll need some sugar."],
     correct: 3,
     transcript: "Mary is going to make some candy. What will she need?",
     czTranscript: "Mary bude vyrábět bonbóny. Co bude potřebovat?",
     expl: "Správná odpověď je d. Candy = bonbóny → potřebuje cukr = some sugar.",
-    distractors: [{"l": "A", "t": "She'll need a hammer.", "w": "kladivo"}, {"l": "B", "t": "She'll need some nickel.", "w": "nikl (kov)"}, {"l": "C", "t": "She'll need a ticket.", "w": "lístek"}]
-  },
+    distractors: [
+        {l:"A",t:"She'll need a hammer.",w:"kladivo"},
+        {l:"B",t:"She'll need some nickel.",w:"nikl (kov)"},
+        {l:"C",t:"She'll need a ticket.",w:"lístek"}
+      ]},
   {
     id: 3, part: "I", type: "listening",
+    czOptions: ["The humidity will be high. = vlhkost bude vysoká.", "The wind will die down. = vítr utiší.", "The weather will become hot. = počasí se oteplí.", "The weather will become cold. = počasí se ochladí."],
     options: ["The humidity will be high.", "The wind will die down.", "The weather will become hot.", "The weather will become cold."],
     correct: 3,
     transcript: "The weatherman says it will freeze tonight. What does he mean?",
     czTranscript: "Meteorolog říká, že dnes v noci zmrzne. Co myslí?",
     expl: "Správná odpověď je d. Freeze = mrzne = The weather will become cold.",
-    distractors: [{"l": "A", "t": "The humidity will be high.", "w": "vlhkost"}, {"l": "B", "t": "The wind will die down.", "w": "vítr ustane"}, {"l": "C", "t": "The weather will become hot.", "w": "teplo"}]
-  },
+    distractors: [
+        {l:"A",t:"The humidity will be high.",w:"vlhkost"},
+        {l:"B",t:"The wind will die down.",w:"vítr ustane"},
+        {l:"C",t:"The weather will become hot.",w:"teplo"}
+      ]},
   {
     id: 4, part: "I", type: "listening",
+    czOptions: ["lazy = líný", "friendly = přátelský", "musical = hudebně nadaný", "efficient = efektivní"],
     options: ["lazy", "friendly", "musical", "efficient"],
     correct: 3,
     transcript: "Private Morris performs his duties well. What sort of man is he?",
     czTranscript: "Vojín Morris plní své povinnosti dobře. Jaký je to člověk?",
     expl: "Správná odpověď je d. Performs duties well = plní povinnosti dobře = efficient (výkonný, efektivní).",
-    distractors: [{"l": "A", "t": "lazy", "w": "líný"}, {"l": "B", "t": "friendly", "w": "přátelský"}, {"l": "C", "t": "musical", "w": "hudební"}]
-  },
+    distractors: [
+        {l:"A",t:"lazy",w:"líný"},
+        {l:"B",t:"friendly",w:"přátelský"},
+        {l:"C",t:"musical",w:"hudební"}
+      ]},
   {
     id: 5, part: "I", type: "listening",
+    czOptions: ["none of the time = nikdy", "all of the time = celou dobu", "most of the time = většinu času", "some of the time = část času"],
     options: ["none of the time", "all of the time", "most of the time", "some of the time"],
     correct: 0,
     transcript: "My mother never drinks coffee. How often does she drink coffee?",
     czTranscript: "Moje matka nikdy nepije kávu. Jak často pije kávu?",
     expl: "Správná odpověď je a. Never = nikdy = none of the time.",
-    distractors: [{"l": "B", "t": "all of the time", "w": "vždy"}, {"l": "C", "t": "most of the time", "w": "většinu času"}, {"l": "D", "t": "some of the time", "w": "někdy"}]
-  },
+    distractors: [
+        {l:"B",t:"all of the time",w:"vždy"},
+        {l:"C",t:"most of the time",w:"většinu času"},
+        {l:"D",t:"some of the time",w:"někdy"}
+      ]},
   {
     id: 6, part: "I", type: "listening",
+    czOptions: ["They are alike. = jsou stejné.", "They are too early. = jsou příliš brzy.", "They are mine. = jsou moje.", "They are nearby. = jsou nablízku."],
     options: ["They are alike.", "They are too early.", "They are mine.", "They are nearby."],
     correct: 0,
     transcript: "These two pictures are the same. What do we say when they are the same?",
     czTranscript: "Tyto dva obrázky jsou stejné. Co říkáme, když jsou stejné?",
     expl: "Správná odpověď je a. Same = stejné = alike (podobné, stejné).",
-    distractors: [{"l": "B", "t": "They are too early.", "w": "příliš brzy"}, {"l": "C", "t": "They are mine.", "w": "moje"}, {"l": "D", "t": "They are nearby.", "w": "poblíž"}]
-  },
+    distractors: [
+        {l:"B",t:"They are too early.",w:"příliš brzy"},
+        {l:"C",t:"They are mine.",w:"moje"},
+        {l:"D",t:"They are nearby.",w:"poblíž"}
+      ]},
   {
     id: 7, part: "I", type: "listening",
+    czOptions: ["a thermometer = teploměr", "a light bulb = žárovka", "a generator = generátor", "a ruler = pravítko"],
     options: ["a thermometer", "a light bulb", "a generator", "a ruler"],
     correct: 2,
     transcript: "Which of these is a machine?",
     czTranscript: "Které z těchto věcí je stroj?",
     expl: "Správná odpověď je c. Generator = generátor = stroj (machine) na výrobu elektrické energie.",
-    distractors: [{"l": "A", "t": "a thermometer", "w": "teploměr"}, {"l": "B", "t": "a light bulb", "w": "žárovka"}, {"l": "D", "t": "a ruler", "w": "pravítko"}]
-  },
+    distractors: [
+        {l:"A",t:"a thermometer",w:"teploměr"},
+        {l:"B",t:"a light bulb",w:"žárovka"},
+        {l:"D",t:"a ruler",w:"pravítko"}
+      ]},
   {
     id: 8, part: "I", type: "listening",
+    czOptions: ["We can have a picnic even if it rains. = piknik můžeme mít i když prší.", "We can have a picnic if the bus comes. = piknik můžeme mít, když přijede autobus.", "We can have a picnic if the day is nice. = piknik můžeme mít, když bude pěkně.", "We can have a picnic if the food comes. = piknik můžeme mít, když přijde jídlo."],
     options: ["We can have a picnic even if it rains.", "We can have a picnic if the bus comes.", "We can have a picnic if the day is nice.", "We can have a picnic if the food comes."],
     correct: 2,
     transcript: "If it clears up, we can have our picnic.",
     czTranscript: "Pokud se vyjasní, můžeme mít piknik.",
     expl: "Správná odpověď je c. Clears up = vyjasnit se (počasí) = if the day is nice.",
-    distractors: [{"l": "A", "t": "We can have a picnic even if it rains.", "w": "i když prší"}, {"l": "B", "t": "We can have a picnic if the bus comes.", "w": "přijede autobus"}, {"l": "D", "t": "We can have a picnic if the food comes.", "w": "přijde jídlo"}]
-  },
+    distractors: [
+        {l:"A",t:"We can have a picnic even if it rains.",w:"i když prší"},
+        {l:"B",t:"We can have a picnic if the bus comes.",w:"přijede autobus"},
+        {l:"D",t:"We can have a picnic if the food comes.",w:"přijde jídlo"}
+      ]},
   {
     id: 9, part: "I", type: "listening",
+    czOptions: ["It will start at 3 o'clock. = začne ve 3 hodiny.", "It will be over at 3 o'clock. = skončí ve 3 hodiny.", "It will close at 3 o'clock. = zavře ve 3 hodiny.", "It will continue at 3 o'clock. = pokračuje ve 3 hodiny."],
     options: ["It will start at 3 o'clock.", "It will be over at 3 o'clock.", "It will close at 3 o'clock.", "It will continue at 3 o'clock."],
     correct: 0,
     transcript: "The movie will begin at three o'clock.",
     czTranscript: "Film začne ve tři hodiny.",
     expl: "Správná odpověď je a. Begin = začít = It will start at 3 o'clock.",
-    distractors: [{"l": "B", "t": "It will be over at 3 o'clock.", "w": "skončí"}, {"l": "C", "t": "It will close at 3 o'clock.", "w": "zavře se"}, {"l": "D", "t": "It will continue at 3 o'clock.", "w": "pokračovat"}]
-  },
+    distractors: [
+        {l:"B",t:"It will be over at 3 o'clock.",w:"skončí"},
+        {l:"C",t:"It will close at 3 o'clock.",w:"zavře se"},
+        {l:"D",t:"It will continue at 3 o'clock.",w:"pokračovat"}
+      ]},
   {
     id: 10, part: "I", type: "listening",
+    czOptions: ["David was too little. = David byl příliš malý.", "David was too fast. = David byl příliš rychlý.", "David was too tall. = David byl příliš vysoký.", "David was too slow. = David byl příliš pomalý."],
     options: ["David was too little.", "David was too fast.", "David was too tall.", "David was too slow."],
     correct: 0,
     transcript: "The coach told David that he was too small to play football.",
     czTranscript: "Trenér řekl Davidovi, že je příliš malý, aby hrál fotbal.",
     expl: "Správná odpověď je a. Too small = příliš malý = too little.",
-    distractors: [{"l": "B", "t": "David was too fast.", "w": "příliš rychlý"}, {"l": "C", "t": "David was too tall.", "w": "příliš vysoký"}, {"l": "D", "t": "David was too slow.", "w": "příliš pomalý"}]
-  },
+    distractors: [
+        {l:"B",t:"David was too fast.",w:"příliš rychlý"},
+        {l:"C",t:"David was too tall.",w:"příliš vysoký"},
+        {l:"D",t:"David was too slow.",w:"příliš pomalý"}
+      ]},
   {
     id: 11, part: "I", type: "listening",
+    czOptions: ["It's the oldest street. = je to nejstarší ulice.", "It's the principal street. = je to hlavní ulice.", "It's the prettiest street. = je to nejkrásnější ulice.", "It's the next street. = je to další ulice."],
     options: ["It's the oldest street.", "It's the principal street.", "It's the prettiest street.", "It's the next street."],
     correct: 1,
     transcript: "Jackson Street's the main street.",
     czTranscript: "Jackson Street je hlavní ulice.",
     expl: "Správná odpověď je b. Main = hlavní = principal.",
-    distractors: [{"l": "A", "t": "It's the oldest street.", "w": "nejstarší"}, {"l": "C", "t": "It's the prettiest street.", "w": "nejhezčí"}, {"l": "D", "t": "It's the next street.", "w": "příští"}]
-  },
+    distractors: [
+        {l:"A",t:"It's the oldest street.",w:"nejstarší"},
+        {l:"C",t:"It's the prettiest street.",w:"nejhezčí"},
+        {l:"D",t:"It's the next street.",w:"příští"}
+      ]},
   {
     id: 12, part: "I", type: "listening",
+    czOptions: ["Yes, it will go up about 10 degrees. = ano, stoupne asi o 10 stupňů.", "Yes, it will be colder than yesterday. = ano, bude chladnější než včera.", "Yes, it will be discussed again tomorrow. = ano, zítra se o tom bude znovu diskutovat.", "Yes, it will drop below zero. = ano, klesne pod nulu."],
     options: ["Yes, it will go up about 10 degrees.", "Yes, it will be colder than yesterday.", "Yes, it will be discussed again tomorrow.", "Yes, it will drop below zero."],
     correct: 0,
     transcript: "Will the temperature rise?",
     czTranscript: "Stoupne teplota?",
     expl: "Správná odpověď je a. Rise = stoupnout = go up (stoupnout o ~10 stupňů).",
-    distractors: [{"l": "B", "t": "Yes, it will be colder than yesterday.", "w": "chladnější"}, {"l": "C", "t": "Yes, it will be discussed again tomorrow.", "w": "bude diskutováno"}, {"l": "D", "t": "Yes, it will drop below zero.", "w": "klesne pod nulu"}]
-  },
+    distractors: [
+        {l:"B",t:"Yes, it will be colder than yesterday.",w:"chladnější"},
+        {l:"C",t:"Yes, it will be discussed again tomorrow.",w:"bude diskutováno"},
+        {l:"D",t:"Yes, it will drop below zero.",w:"klesne pod nulu"}
+      ]},
   {
     id: 13, part: "I", type: "listening",
+    czOptions: ["I'm looking for a sale tomorrow. = hledám zítřejší výprodej.", "The woman died last night. = žena zemřela minulou noc.", "It was a bad accident. = byla to zlá nehoda.", "It looks pretty nice. = vypadá docela hezky."],
     options: ["I'm looking for a sale tomorrow.", "The woman died last night.", "It was a bad accident.", "It looks pretty nice."],
     correct: 3,
     transcript: "Jim asked, \"What's the weather like?\" How should you answer this question?",
     czTranscript: "Jim se zeptal: \"Jaké je počasí?\" Jak byste měli odpovědět?",
     expl: "Správná odpověď je d. What's the weather like? = Jaké je počasí? → It looks pretty nice. (Vypadá hezky.)",
-    distractors: [{"l": "A", "t": "I'm looking for a sale tomorrow.", "w": "hledám výprodej"}, {"l": "B", "t": "The woman died last night.", "w": "žena zemřela"}, {"l": "C", "t": "It was a bad accident.", "w": "nehoda"}]
-  },
+    distractors: [
+        {l:"A",t:"I'm looking for a sale tomorrow.",w:"hledám výprodej"},
+        {l:"B",t:"The woman died last night.",w:"žena zemřela"},
+        {l:"C",t:"It was a bad accident.",w:"nehoda"}
+      ]},
   {
     id: 14, part: "I", type: "listening",
+    czOptions: ["exposure to the sand = vystavení písku", "exposure to the sea = vystavení moři", "exposure to the surf = vystavení vlnám", "exposure to the sun = vystavení slunci"],
     options: ["exposure to the sand", "exposure to the sea", "exposure to the surf", "exposure to the sun"],
     correct: 3,
     transcript: "The student went to the beach and got a severe burn. What caused the burn?",
     czTranscript: "Student šel na pláž a dostal silné spáleniny. Co způsobilo spáleniny?",
     expl: "Správná odpověď je d. Severe burn na pláži = spáleniny od slunce = exposure to the sun.",
-    distractors: [{"l": "A", "t": "exposure to the sand", "w": "písek"}, {"l": "B", "t": "exposure to the sea", "w": "moře"}, {"l": "C", "t": "exposure to the surf", "w": "vlny"}]
-  },
+    distractors: [
+        {l:"A",t:"exposure to the sand",w:"písek"},
+        {l:"B",t:"exposure to the sea",w:"moře"},
+        {l:"C",t:"exposure to the surf",w:"vlny"}
+      ]},
   {
     id: 15, part: "I", type: "listening",
+    czOptions: ["Visibility was very poor. = viditelnost byla velmi špatná.", "It was a nice day. = byl pěkný den.", "The pilot needed goggles. = pilot potřeboval brýle.", "The pilot was in good shape. = pilot byl v dobré kondici."],
     options: ["Visibility was very poor.", "It was a nice day.", "The pilot needed goggles.", "The pilot was in good shape."],
     correct: 0,
     transcript: "Why couldn't the pilot see the runway?",
     czTranscript: "Proč pilot neviděl přistávací dráhu?",
     expl: "Správná odpověď je a. Pilot neviděl = viditelnost byla špatná = Visibility was very poor.",
-    distractors: [{"l": "B", "t": "It was a nice day.", "w": "pěkný den"}, {"l": "C", "t": "The pilot needed goggles.", "w": "brýle"}, {"l": "D", "t": "The pilot was in good shape.", "w": "byl v kondici"}]
-  },
+    distractors: [
+        {l:"B",t:"It was a nice day.",w:"pěkný den"},
+        {l:"C",t:"The pilot needed goggles.",w:"brýle"},
+        {l:"D",t:"The pilot was in good shape.",w:"byl v kondici"}
+      ]},
   {
     id: 16, part: "I", type: "listening",
+    czOptions: ["He'll fix the car. = opraví auto.", "He'll repair the car. = opraví auto.", "He'll examine the car. = zkontroluje auto.", "He'll buy the car. = koupí auto."],
     options: ["He'll fix the car.", "He'll repair the car.", "He'll examine the car.", "He'll buy the car."],
     correct: 2,
     transcript: "The mechanic will inspect your car tomorrow. What will he do?",
     czTranscript: "Mechanik zítra zkontroluje vaše auto. Co udělá?",
     expl: "Správná odpověď je c. Inspect = prohlédnout, zkontrolovat = examine the car.",
-    distractors: [{"l": "A", "t": "He'll fix the car.", "w": "opraví"}, {"l": "B", "t": "He'll repair the car.", "w": "opraví"}, {"l": "D", "t": "He'll buy the car.", "w": "koupí"}]
-  },
+    distractors: [
+        {l:"A",t:"He'll fix the car.",w:"opraví"},
+        {l:"B",t:"He'll repair the car.",w:"opraví"},
+        {l:"D",t:"He'll buy the car.",w:"koupí"}
+      ]},
   {
     id: 17, part: "I", type: "listening",
+    czOptions: ["foreign languages = cizí jazyky", "basic substances = základní látky", "important dates = důležitá data", "political systems = politické systémy"],
     options: ["foreign languages", "basic substances", "important dates", "political systems"],
     correct: 1,
     transcript: "Carl's studying chemistry at school. What's he studying?",
     czTranscript: "Carl studuje chemii ve škole. Co studuje?",
     expl: "Správná odpověď je b. Chemistry = chemie = věda o základních látkách = basic substances.",
-    distractors: [{"l": "A", "t": "foreign languages", "w": "cizí jazyky"}, {"l": "C", "t": "important dates", "w": "důležitá data"}, {"l": "D", "t": "political systems", "w": "politické systémy"}]
-  },
+    distractors: [
+        {l:"A",t:"foreign languages",w:"cizí jazyky"},
+        {l:"C",t:"important dates",w:"důležitá data"},
+        {l:"D",t:"political systems",w:"politické systémy"}
+      ]},
   {
     id: 18, part: "I", type: "listening",
+    czOptions: ["drink standing up = pít vestoje", "fill the glass = naplnit sklenici", "finish his drink = dopít drink", "order a drink = objednat drink"],
     options: ["drink standing up", "fill the glass", "finish his drink", "order a drink"],
     correct: 2,
     transcript: "Bill said to his friend, \"Drink up, then we'll go home.\" What did Bill want his friend to do?",
     czTranscript: "Bill řekl příteli: \"Dopi to, pak půjdeme domů.\" Co chtěl Bill, aby přítel udělal?",
     expl: "Správná odpověď je c. Drink up = dopít = finish his drink.",
-    distractors: [{"l": "A", "t": "drink standing up", "w": "pít vestoje"}, {"l": "B", "t": "fill the glass", "w": "naplnit sklenici"}, {"l": "D", "t": "order a drink", "w": "objednat nápoj"}]
-  },
+    distractors: [
+        {l:"A",t:"drink standing up",w:"pít vestoje"},
+        {l:"B",t:"fill the glass",w:"naplnit sklenici"},
+        {l:"D",t:"order a drink",w:"objednat nápoj"}
+      ]},
   {
     id: 19, part: "I", type: "listening",
+    czOptions: ["He left the hotel. = opustil hotel.", "He checked the hotel officially. = úředně zkontroloval hotel.", "He cashed a check in the hotel. = proplatil šek v hotelu.", "He arrived and registered in the hotel. = dorazil a ubytoval se v hotelu."],
     options: ["He left the hotel.", "He checked the hotel officially.", "He cashed a check in the hotel.", "He arrived and registered in the hotel."],
     correct: 3,
     transcript: "Dick checked in at the hotel last night. What did he do?",
     czTranscript: "Dick se včera večer přihlásil do hotelu. Co udělal?",
     expl: "Správná odpověď je d. Checked in = přihlásil se (v hotelu) = arrived and registered.",
-    distractors: [{"l": "A", "t": "He left the hotel.", "w": "opustil hotel"}, {"l": "B", "t": "He checked the hotel officially.", "w": "zkontroloval hotel"}, {"l": "C", "t": "He cashed a check in the hotel.", "w": "proplatil šek"}]
-  },
+    distractors: [
+        {l:"A",t:"He left the hotel.",w:"opustil hotel"},
+        {l:"B",t:"He checked the hotel officially.",w:"zkontroloval hotel"},
+        {l:"C",t:"He cashed a check in the hotel.",w:"proplatil šek"}
+      ]},
   {
     id: 20, part: "I", type: "listening",
+    czOptions: ["not to smoke = nekouřit", "not to talk = nemluvit", "not to stop = nezastavovat", "not to enter = nevstupovat"],
     options: ["not to smoke", "not to talk", "not to stop", "not to enter"],
     correct: 3,
     transcript: "The sign said, \"Keep Out.\" What did it say?",
     czTranscript: "Cedule říkala: \"Nevstupovat.\" Co říkala?",
     expl: "Správná odpověď je d. Keep out = nevstupovat = not to enter.",
-    distractors: [{"l": "A", "t": "not to smoke", "w": "nekouřit"}, {"l": "B", "t": "not to talk", "w": "nemluvit"}, {"l": "C", "t": "not to stop", "w": "nezastavovat"}]
-  },
+    distractors: [
+        {l:"A",t:"not to smoke",w:"nekouřit"},
+        {l:"B",t:"not to talk",w:"nemluvit"},
+        {l:"C",t:"not to stop",w:"nezastavovat"}
+      ]},
   {
     id: 21, part: "I", type: "listening",
+    czOptions: ["He lived alone in the house. = žil sám v domě.", "He bought the house. = koupil dům.", "He built the house. = postavil dům.", "He talked about the house. = mluvil o domě."],
     options: ["He lived alone in the house.", "He bought the house.", "He built the house.", "He talked about the house."],
     correct: 2,
     transcript: "Mr. Baker constructed that house by himself.",
     czTranscript: "Pan Baker postavil ten dům sám.",
     expl: "Správná odpověď je c. Constructed = postavil = He built the house.",
-    distractors: [{"l": "A", "t": "He lived alone in the house.", "w": "sám žil"}, {"l": "B", "t": "He bought the house.", "w": "koupil"}, {"l": "D", "t": "He talked about the house.", "w": "mluvil"}]
-  },
+    distractors: [
+        {l:"A",t:"He lived alone in the house.",w:"sám žil"},
+        {l:"B",t:"He bought the house.",w:"koupil"},
+        {l:"D",t:"He talked about the house.",w:"mluvil"}
+      ]},
   {
     id: 22, part: "I", type: "listening",
+    czOptions: ["He is not tall. = není vysoký.", "He is not intelligent. = není inteligentní.", "He is not strong. = není silný.", "He is not handsome. = není pohledný."],
     options: ["He is not tall.", "He is not intelligent.", "He is not strong.", "He is not handsome."],
     correct: 2,
     transcript: "Peter is weak.",
     czTranscript: "Peter je slabý.",
     expl: "Správná odpověď je c. Weak = slabý = He is not strong.",
-    distractors: [{"l": "A", "t": "He is not tall.", "w": "není vysoký"}, {"l": "B", "t": "He is not intelligent.", "w": "není chytrý"}, {"l": "D", "t": "He is not handsome.", "w": "není hezký"}]
-  },
+    distractors: [
+        {l:"A",t:"He is not tall.",w:"není vysoký"},
+        {l:"B",t:"He is not intelligent.",w:"není chytrý"},
+        {l:"D",t:"He is not handsome.",w:"není hezký"}
+      ]},
   {
     id: 23, part: "I", type: "listening",
+    czOptions: ["She was uncomfortable. = bylo jí nepříjemně.", "She was afraid. = měla strach.", "She was happy. = byla šťastná.", "She was sorry. = bylo jí líto."],
     options: ["She was uncomfortable.", "She was afraid.", "She was happy.", "She was sorry."],
     correct: 0,
     transcript: "The cold weather bothered the woman very much.",
     czTranscript: "Chladné počasí ženě velmi vadilo.",
     expl: "Správná odpověď je a. Bothered = vadilo, obtěžovalo = She was uncomfortable (bylo jí nepříjemně).",
-    distractors: [{"l": "B", "t": "She was afraid.", "w": "bála se"}, {"l": "C", "t": "She was happy.", "w": "šťastná"}, {"l": "D", "t": "She was sorry.", "w": "omlouvala se"}]
-  },
+    distractors: [
+        {l:"B",t:"She was afraid.",w:"bála se"},
+        {l:"C",t:"She was happy.",w:"šťastná"},
+        {l:"D",t:"She was sorry.",w:"omlouvala se"}
+      ]},
   {
     id: 24, part: "I", type: "listening",
+    czOptions: ["Her watch doesn't show the right time. = její hodinky neukazují správný čas.", "Her time is off five minutes. = její čas je o pět minut posunutý.", "Her watch stops a few times each day. = její hodinky se zastaví několikrát denně.", "Her watch keeps correct time. = její hodinky jdou přesně."],
     options: ["Her watch doesn't show the right time.", "Her time is off five minutes.", "Her watch stops a few times each day.", "Her watch keeps correct time."],
     correct: 3,
     transcript: "Penny's watch keeps accurate time.",
     czTranscript: "Penniny hodinky ukazují přesný čas.",
     expl: "Správná odpověď je d. Accurate = přesný = correct time (správný čas).",
-    distractors: [{"l": "A", "t": "Her watch doesn't show the right time.", "w": "neukazuje správný čas"}, {"l": "B", "t": "Her time is off five minutes.", "w": "o 5 minut"}, {"l": "C", "t": "Her watch stops a few times each day.", "w": "zastavuje se"}]
-  },
+    distractors: [
+        {l:"A",t:"Her watch doesn't show the right time.",w:"neukazuje správný čas"},
+        {l:"B",t:"Her time is off five minutes.",w:"o 5 minut"},
+        {l:"C",t:"Her watch stops a few times each day.",w:"zastavuje se"}
+      ]},
   {
     id: 25, part: "I", type: "listening",
+    czOptions: ["He was angry. = byl naštvaný.", "He was sick. = byl nemocný.", "He was sleepy. = byl ospalý.", "He was busy. = byl zaneprázdněn."],
     options: ["He was angry.", "He was sick.", "He was sleepy.", "He was busy."],
     correct: 3,
     transcript: "When I called him, he was too occupied to talk.",
     czTranscript: "Když jsem mu zavolal, byl příliš zaneprázdněn na to, aby mluvil.",
     expl: "Správná odpověď je d. Occupied = zaneprázdněný = busy.",
-    distractors: [{"l": "A", "t": "He was angry.", "w": "naštvaný"}, {"l": "B", "t": "He was sick.", "w": "nemocný"}, {"l": "C", "t": "He was sleepy.", "w": "ospalý"}]
-  },
+    distractors: [
+        {l:"A",t:"He was angry.",w:"naštvaný"},
+        {l:"B",t:"He was sick.",w:"nemocný"},
+        {l:"C",t:"He was sleepy.",w:"ospalý"}
+      ]},
   {
     id: 26, part: "I", type: "listening",
+    czOptions: ["Her mind is disturbed. = je psychicky narušena.", "Her leg is broken. = má zlomenou nohu.", "Her heart is weak. = má slabé srdce.", "Her fever is elevated. = má zvýšenou horečku."],
     options: ["Her mind is disturbed.", "Her leg is broken.", "Her heart is weak.", "Her fever is elevated."],
     correct: 0,
     transcript: "Sylvia is mentally ill.",
     czTranscript: "Sylvia je duševně nemocná.",
     expl: "Správná odpověď je a. Mentally ill = duševně nemocná = Her mind is disturbed.",
-    distractors: [{"l": "B", "t": "Her leg is broken.", "w": "zlomená noha"}, {"l": "C", "t": "Her heart is weak.", "w": "slabé srdce"}, {"l": "D", "t": "Her fever is elevated.", "w": "horečka"}]
-  },
+    distractors: [
+        {l:"B",t:"Her leg is broken.",w:"zlomená noha"},
+        {l:"C",t:"Her heart is weak.",w:"slabé srdce"},
+        {l:"D",t:"Her fever is elevated.",w:"horečka"}
+      ]},
   {
     id: 27, part: "I", type: "listening",
+    czOptions: ["The tank is full. = nádrž je plná.", "The tank has a hole in it. = nádrž má díru.", "The tank smells bad. = nádrž páchne.", "The tank needs to be moved. = nádrž je potřeba přesunout."],
     options: ["The tank is full.", "The tank has a hole in it.", "The tank smells bad.", "The tank needs to be moved."],
     correct: 1,
     transcript: "The tank leaks.",
     czTranscript: "Nádrž teče.",
     expl: "Správná odpověď je b. Leaks = teče = The tank has a hole in it (nádrž má díru).",
-    distractors: [{"l": "A", "t": "The tank is full.", "w": "plná"}, {"l": "C", "t": "The tank smells bad.", "w": "zapáchá"}, {"l": "D", "t": "The tank needs to be moved.", "w": "přesunout"}]
-  },
+    distractors: [
+        {l:"A",t:"The tank is full.",w:"plná"},
+        {l:"C",t:"The tank smells bad.",w:"zapáchá"},
+        {l:"D",t:"The tank needs to be moved.",w:"přesunout"}
+      ]},
   {
     id: 28, part: "I", type: "listening",
+    czOptions: ["looks = vypadá", "sounds = zní", "smells = voní", "tastes = chutná"],
     options: ["looks", "sounds", "smells", "tastes"],
     correct: 2,
     transcript: "Why do some women wear perfume?",
     czTranscript: "Proč některé ženy nosí parfém?",
     expl: "Správná odpověď je c. Parfém se nosí pro vůni = smells (voní).",
-    distractors: [{"l": "A", "t": "looks", "w": "vypadá"}, {"l": "B", "t": "sounds", "w": "zní"}, {"l": "D", "t": "tastes", "w": "chutná"}]
-  },
+    distractors: [
+        {l:"A",t:"looks",w:"vypadá"},
+        {l:"B",t:"sounds",w:"zní"},
+        {l:"D",t:"tastes",w:"chutná"}
+      ]},
   {
     id: 29, part: "I", type: "listening",
+    czOptions: ["in a small city = v malém městě", "at a roadside park = u silničního parku", "at a country motel = u venkovského motelu", "in a large city = ve velkém městě"],
     options: ["in a small city", "at a roadside park", "at a country motel", "in a large city"],
     correct: 0,
     transcript: "After traveling a long time, Albert stopped to rest in a town. Where did he stop?",
     czTranscript: "Po dlouhé cestě se Albert zastavil odpočinout v městečku. Kde se zastavil?",
     expl: "Správná odpověď je a. Town = městečko = in a small city.",
-    distractors: [{"l": "B", "t": "at a roadside park", "w": "u silničního parku"}, {"l": "C", "t": "at a country motel", "w": "v motelu na venkově"}, {"l": "D", "t": "in a large city", "w": "ve velkém městě"}]
-  },
+    distractors: [
+        {l:"B",t:"at a roadside park",w:"u silničního parku"},
+        {l:"C",t:"at a country motel",w:"v motelu na venkově"},
+        {l:"D",t:"in a large city",w:"ve velkém městě"}
+      ]},
   {
     id: 30, part: "I", type: "listening",
+    czOptions: ["pay them = platit jim", "help them = pomáhat jim", "watch them = sledovat je", "direct them = řídit je"],
     options: ["pay them", "help them", "watch them", "direct them"],
     correct: 2,
     transcript: "Tom is going to observe the carpenters. What is he going to do?",
     czTranscript: "Tom bude pozorovat tesaře. Co bude dělat?",
     expl: "Správná odpověď je c. Observe = pozorovat = watch them.",
-    distractors: [{"l": "A", "t": "pay them", "w": "zaplatit"}, {"l": "B", "t": "help them", "w": "pomáhat"}, {"l": "D", "t": "direct them", "w": "řídit"}]
-  },
+    distractors: [
+        {l:"A",t:"pay them",w:"zaplatit"},
+        {l:"B",t:"help them",w:"pomáhat"},
+        {l:"D",t:"direct them",w:"řídit"}
+      ]},
   {
     id: 31, part: "I", type: "listening",
+    czOptions: ["if it has many parts = zda má mnoho částí", "if it runs at all = zda vůbec jede", "if it makes much noise = zda dělá hodně hluku", "if it uses much gas = zda spotřebovává hodně benzínu"],
     options: ["if it has many parts", "if it runs at all", "if it makes much noise", "if it uses much gas"],
     correct: 1,
     transcript: "Mr. Burke wants to know if the motor functions. What does he want to know?",
     czTranscript: "Pan Burke chce vědět, zda motor funguje. Co chce vědět?",
     expl: "Správná odpověď je b. Functions = funguje = if it runs at all (zda vůbec běží).",
-    distractors: [{"l": "A", "t": "if it has many parts", "w": "mnoho dílů"}, {"l": "C", "t": "if it makes much noise", "w": "hluk"}, {"l": "D", "t": "if it uses much gas", "w": "spotřeba"}]
-  },
+    distractors: [
+        {l:"A",t:"if it has many parts",w:"mnoho dílů"},
+        {l:"C",t:"if it makes much noise",w:"hluk"},
+        {l:"D",t:"if it uses much gas",w:"spotřeba"}
+      ]},
   {
     id: 32, part: "I", type: "listening",
+    czOptions: ["happy = šťastný", "angry = naštvaný", "pleased = spokojený", "generous = štědrý"],
     options: ["happy", "angry", "pleased", "generous"],
     correct: 1,
     transcript: "The irritated man went on his way. How was the man feeling?",
     czTranscript: "Podrážděný muž šel dál svou cestou. Jak se muž cítil?",
     expl: "Správná odpověď je b. Irritated = podrážděný = angry (naštvaný).",
-    distractors: [{"l": "A", "t": "happy", "w": "šťastný"}, {"l": "C", "t": "pleased", "w": "potěšený"}, {"l": "D", "t": "generous", "w": "štědrý"}]
-  },
+    distractors: [
+        {l:"A",t:"happy",w:"šťastný"},
+        {l:"C",t:"pleased",w:"potěšený"},
+        {l:"D",t:"generous",w:"štědrý"}
+      ]},
   {
     id: 33, part: "I", type: "listening",
+    czOptions: ["get sick = onemocnět", "perform = hrát", "understand = porozumět", "play games = hrát hry"],
     options: ["get sick", "perform", "understand", "play games"],
     correct: 2,
     transcript: "Bill's just beginning to catch on. What's Bill beginning to do?",
     czTranscript: "Bill právě začíná chápat. Co Bill začíná dělat?",
     expl: "Správná odpověď je c. Catch on = začít chápat = understand.",
-    distractors: [{"l": "A", "t": "get sick", "w": "onemocnět"}, {"l": "B", "t": "perform", "w": "vystupovat"}, {"l": "D", "t": "play games", "w": "hrát hry"}]
-  },
+    distractors: [
+        {l:"A",t:"get sick",w:"onemocnět"},
+        {l:"B",t:"perform",w:"vystupovat"},
+        {l:"D",t:"play games",w:"hrát hry"}
+      ]},
   {
     id: 34, part: "I", type: "listening",
+    czOptions: ["to take things out = vyndavat věci", "to hold things together = spojovat věci", "to make things noticeable = zvýrazňovat věci", "to keep things fresh = uchovávat věci čerstvé"],
     options: ["to take things out", "to hold things together", "to make things noticeable", "to keep things fresh"],
     correct: 1,
     transcript: "What are screws used for?",
     czTranscript: "K čemu se používají šrouby?",
     expl: "Správná odpověď je b. Screws = šrouby = to hold things together (spojovat věci dohromady).",
-    distractors: [{"l": "A", "t": "to take things out", "w": "vyndávat"}, {"l": "C", "t": "to make things noticeable", "w": "upozornit"}, {"l": "D", "t": "to keep things fresh", "w": "zachovat čerstvé"}]
-  },
+    distractors: [
+        {l:"A",t:"to take things out",w:"vyndávat"},
+        {l:"C",t:"to make things noticeable",w:"upozornit"},
+        {l:"D",t:"to keep things fresh",w:"zachovat čerstvé"}
+      ]},
   {
     id: 35, part: "I", type: "listening",
+    czOptions: ["He bought shoes. = koupil boty.", "He bought food. = koupil jídlo.", "He bought clothes. = koupil oblečení.", "He bought medicine. = koupil léky."],
     options: ["He bought shoes.", "He bought food.", "He bought clothes.", "He bought medicine."],
     correct: 1,
     transcript: "Sam paid twenty dollars for groceries.",
     czTranscript: "Sam zaplatil dvacet dolarů za potraviny.",
     expl: "Správná odpověď je b. Groceries = potraviny = He bought food.",
-    distractors: [{"l": "A", "t": "He bought shoes.", "w": "boty"}, {"l": "C", "t": "He bought clothes.", "w": "oblečení"}, {"l": "D", "t": "He bought medicine.", "w": "léky"}]
-  },
+    distractors: [
+        {l:"A",t:"He bought shoes.",w:"boty"},
+        {l:"C",t:"He bought clothes.",w:"oblečení"},
+        {l:"D",t:"He bought medicine.",w:"léky"}
+      ]},
   {
     id: 36, part: "I", type: "listening",
+    czOptions: ["It was short. = bylo krátké.", "It was long. = bylo dlouhé.", "It was boring. = bylo nudné.", "It was interesting. = bylo zajímavé."],
     options: ["It was short.", "It was long.", "It was boring.", "It was interesting."],
     correct: 1,
     transcript: "The lecture was lengthy.",
     czTranscript: "Přednáška byla zdlouhavá.",
     expl: "Správná odpověď je b. Lengthy = zdlouhavý, dlouhý = It was long.",
-    distractors: [{"l": "A", "t": "It was short.", "w": "krátká"}, {"l": "C", "t": "It was boring.", "w": "nudná"}, {"l": "D", "t": "It was interesting.", "w": "zajímavá"}]
-  },
+    distractors: [
+        {l:"A",t:"It was short.",w:"krátká"},
+        {l:"C",t:"It was boring.",w:"nudná"},
+        {l:"D",t:"It was interesting.",w:"zajímavá"}
+      ]},
   {
     id: 37, part: "I", type: "listening",
+    czOptions: ["It went out of control. = vymklo se z kontroly.", "It failed to stop. = nezastavilo.", "It turned over. = převrhlo se.", "It stopped running. = přestalo fungovat."],
     options: ["It went out of control.", "It failed to stop.", "It turned over.", "It stopped running."],
     correct: 3,
     transcript: "David's car stalled right in the middle of the intersection.",
     czTranscript: "Davidovo auto se zaseklo přímo uprostřed křižovatky.",
     expl: "Správná odpověď je d. Stalled = zastavilo se (motor zhasnul) = It stopped running.",
-    distractors: [{"l": "A", "t": "It went out of control.", "w": "ztratilo kontrolu"}, {"l": "B", "t": "It failed to stop.", "w": "nezastavilo se"}, {"l": "C", "t": "It turned over.", "w": "převrátilo se"}]
-  },
+    distractors: [
+        {l:"A",t:"It went out of control.",w:"ztratilo kontrolu"},
+        {l:"B",t:"It failed to stop.",w:"nezastavilo se"},
+        {l:"C",t:"It turned over.",w:"převrátilo se"}
+      ]},
   {
     id: 38, part: "I", type: "listening",
+    czOptions: ["He put it away. = uložil to.", "He read it again. = přečetl to znovu.", "He cleaned it up. = vyčistil to.", "He doubled it over. = přeložil to."],
     options: ["He put it away.", "He read it again.", "He cleaned it up.", "He doubled it over."],
     correct: 3,
     transcript: "Peter folded the paper carefully.",
     czTranscript: "Peter pečlivě přeložil papír.",
     expl: "Správná odpověď je d. Folded = přeložil, přehnul = He doubled it over.",
-    distractors: [{"l": "A", "t": "He put it away.", "w": "odložil"}, {"l": "B", "t": "He read it again.", "w": "znovu přečetl"}, {"l": "C", "t": "He cleaned it up.", "w": "vyčistil"}]
-  },
+    distractors: [
+        {l:"A",t:"He put it away.",w:"odložil"},
+        {l:"B",t:"He read it again.",w:"znovu přečetl"},
+        {l:"C",t:"He cleaned it up.",w:"vyčistil"}
+      ]},
   {
     id: 39, part: "I", type: "listening",
+    czOptions: ["There were many people who voted. = hlasovalo mnoho lidí.", "Most people voted against it. = většina hlasovala proti.", "Many people did not vote. = mnoho lidí nevolilo.", "Most people voted for it. = většina hlasovala pro."],
     options: ["There were many people who voted.", "Most people voted against it.", "Many people did not vote.", "Most people voted for it."],
     correct: 1,
     transcript: "The vote on the bill was negative.",
     czTranscript: "Hlasování o návrhu zákona bylo záporné.",
     expl: "Správná odpověď je b. Negative vote = záporné hlasování = Most people voted against it.",
-    distractors: [{"l": "A", "t": "There were many people who voted.", "w": "mnoho hlasovalo"}, {"l": "C", "t": "Many people did not vote.", "w": "nehlasovali"}, {"l": "D", "t": "Most people voted for it.", "w": "pro"}]
-  },
+    distractors: [
+        {l:"A",t:"There were many people who voted.",w:"mnoho hlasovalo"},
+        {l:"C",t:"Many people did not vote.",w:"nehlasovali"},
+        {l:"D",t:"Most people voted for it.",w:"pro"}
+      ]},
   {
     id: 40, part: "I", type: "listening",
+    czOptions: ["They checked their machines. = zkontrolovali stroje.", "They completed their assignment. = dokončili úkol.", "They failed in their mission. = selhali ve svém poslání.", "They returned with their bombs. = vrátili se s bombami."],
     options: ["They checked their machines.", "They completed their assignment.", "They failed in their mission.", "They returned with their bombs."],
     correct: 1,
     transcript: "All the pilots of the first squadron accomplished their bombing mission yesterday.",
     czTranscript: "Všichni piloti první eskadry včera splnili svou bombardovací misi.",
     expl: "Správná odpověď je b. Accomplished their mission = splnili misi = They completed their assignment.",
-    distractors: [{"l": "A", "t": "They checked their machines.", "w": "zkontrolovali"}, {"l": "C", "t": "They failed in their mission.", "w": "selhali"}, {"l": "D", "t": "They returned with their bombs.", "w": "vrátili s bombami"}]
-  },
+    distractors: [
+        {l:"A",t:"They checked their machines.",w:"zkontrolovali"},
+        {l:"C",t:"They failed in their mission.",w:"selhali"},
+        {l:"D",t:"They returned with their bombs.",w:"vrátili s bombami"}
+      ]},
   {
     id: 41, part: "I", type: "listening",
+    czOptions: ["To meet peacefully is an important right. = pokojné shromažďování je důležité právo.", "People have no right to assemble peacefully. = lidé nemají právo pokojně se shromažďovat.", "Peaceful assembly is rarely guaranteed. = pokojné shromažďování je zřídka zaručeno.", "There are no real important rights. = neexistují žádná skutečně důležitá práva."],
     options: ["To meet peacefully is an important right.", "People have no right to assemble peacefully.", "Peaceful assembly is rarely guaranteed.", "There are no real important rights."],
     correct: 0,
     transcript: "One of the important rights guaranteed by the Bill of Rights is the right to assemble peacefully.",
     czTranscript: "Jedno z důležitých práv zaručených Listinou práv je právo se mírově shromažďovat.",
     expl: "Správná odpověď je a. Right to assemble peacefully = právo mírově se shromažďovat = To meet peacefully is an important right.",
-    distractors: [{"l": "B", "t": "People have no right to assemble peacefully.", "w": "nemají právo"}, {"l": "C", "t": "Peaceful assembly is rarely guaranteed.", "w": "zřídka zaručeno"}, {"l": "D", "t": "There are no real important rights.", "w": "žádná práva"}]
-  },
+    distractors: [
+        {l:"B",t:"People have no right to assemble peacefully.",w:"nemají právo"},
+        {l:"C",t:"Peaceful assembly is rarely guaranteed.",w:"zřídka zaručeno"},
+        {l:"D",t:"There are no real important rights.",w:"žádná práva"}
+      ]},
   {
     id: 42, part: "I", type: "listening",
+    czOptions: ["I did his work. = udělal jeho práci.", "I wrote to him. = napsal mu.", "I looked after him. = postaral se o něj.", "I bought medicine for him. = koupil mu léky."],
     options: ["I did his work.", "I wrote to him.", "I looked after him.", "I bought medicine for him."],
     correct: 0,
     transcript: "I substituted for my brother while he was ill.",
     czTranscript: "Zastoupil jsem bratra, zatímco byl nemocný.",
     expl: "Správná odpověď je a. Substituted for = zastoupil, udělal jeho práci = I did his work.",
-    distractors: [{"l": "B", "t": "I wrote to him.", "w": "napsal jsem"}, {"l": "C", "t": "I looked after him.", "w": "staral jsem se"}, {"l": "D", "t": "I bought medicine for him.", "w": "koupil léky"}]
-  },
+    distractors: [
+        {l:"B",t:"I wrote to him.",w:"napsal jsem"},
+        {l:"C",t:"I looked after him.",w:"staral jsem se"},
+        {l:"D",t:"I bought medicine for him.",w:"koupil léky"}
+      ]},
   {
     id: 43, part: "I", type: "listening",
+    czOptions: ["It did its work. = udělala svou práci.", "It made a lot of noise. = dělala hodně hluku.", "It was carefully built. = byla pečlivě postavena.", "It did a lot of damage. = způsobila hodně škod."],
     options: ["It did its work.", "It made a lot of noise.", "It was carefully built.", "It did a lot of damage."],
     correct: 3,
     transcript: "The weapon was very destructive.",
     czTranscript: "Zbraň byla velmi ničivá.",
     expl: "Správná odpověď je d. Destructive = ničivý = It did a lot of damage.",
-    distractors: [{"l": "A", "t": "It did its work.", "w": "splnilo práci"}, {"l": "B", "t": "It made a lot of noise.", "w": "hluk"}, {"l": "C", "t": "It was carefully built.", "w": "pečlivě vyrobeno"}]
-  },
+    distractors: [
+        {l:"A",t:"It did its work.",w:"splnilo práci"},
+        {l:"B",t:"It made a lot of noise.",w:"hluk"},
+        {l:"C",t:"It was carefully built.",w:"pečlivě vyrobeno"}
+      ]},
   {
     id: 44, part: "I", type: "listening",
+    czOptions: ["It's convenient. = je pohodlný.", "It's big. = je velký.", "It's modern. = je moderní.", "It's interesting. = je zajímavý."],
     options: ["It's convenient.", "It's big.", "It's modern.", "It's interesting."],
     correct: 1,
     transcript: "We landed at the airport in New York. It's huge.",
     czTranscript: "Přistáli jsme na letišti v New Yorku. Je obrovské.",
     expl: "Správná odpověď je b. Huge = obrovský = It's big.",
-    distractors: [{"l": "A", "t": "It's convenient.", "w": "pohodlné"}, {"l": "C", "t": "It's modern.", "w": "moderní"}, {"l": "D", "t": "It's interesting.", "w": "zajímavé"}]
-  },
+    distractors: [
+        {l:"A",t:"It's convenient.",w:"pohodlné"},
+        {l:"C",t:"It's modern.",w:"moderní"},
+        {l:"D",t:"It's interesting.",w:"zajímavé"}
+      ]},
   {
     id: 45, part: "I", type: "listening",
+    czOptions: ["The company has a few people working for it. = firma zaměstnává pár lidí.", "The company has a large number of employees. = firma má velký počet zaměstnanců.", "The company couldn't employ many people. = firma nemohla zaměstnat mnoho lidí.", "The company employs exactly one hundred people. = firma zaměstnává přesně sto lidí."],
     options: ["The company has a few people working for it.", "The company has a large number of employees.", "The company couldn't employ many people.", "The company employs exactly one hundred people."],
     correct: 1,
     transcript: "Hundreds of people work for the company.",
     czTranscript: "Stovky lidí pracují pro společnost.",
     expl: "Správná odpověď je b. Hundreds of people = stovky lidí = a large number of employees.",
-    distractors: [{"l": "A", "t": "The company has a few people working for it.", "w": "pár lidí"}, {"l": "C", "t": "The company couldn't employ many people.", "w": "nemohla zaměstnat"}, {"l": "D", "t": "The company employs exactly one hundred people.", "w": "přesně sto"}]
-  },
+    distractors: [
+        {l:"A",t:"The company has a few people working for it.",w:"pár lidí"},
+        {l:"C",t:"The company couldn't employ many people.",w:"nemohla zaměstnat"},
+        {l:"D",t:"The company employs exactly one hundred people.",w:"přesně sto"}
+      ]},
   {
     id: 46, part: "I", type: "listening",
+    czOptions: ["It was balanced. = byl vyvážený.", "It was stable. = byl stabilní.", "It was unbalanced. = byl nevyvážený.", "It was new. = byl nový."],
     options: ["It was balanced.", "It was stable.", "It was unbalanced.", "It was new."],
     correct: 2,
     transcript: "What caused the car wheel to wobble?",
     czTranscript: "Co způsobilo, že se kolo auta kývalo?",
     expl: "Správná odpověď je c. Wobble = kývat se = It was unbalanced (nevyvážené).",
-    distractors: [{"l": "A", "t": "It was balanced.", "w": "vyvážené"}, {"l": "B", "t": "It was stable.", "w": "stabilní"}, {"l": "D", "t": "It was new.", "w": "nové"}]
-  },
+    distractors: [
+        {l:"A",t:"It was balanced.",w:"vyvážené"},
+        {l:"B",t:"It was stable.",w:"stabilní"},
+        {l:"D",t:"It was new.",w:"nové"}
+      ]},
   {
     id: 47, part: "I", type: "listening",
+    czOptions: ["It was loose. = byl volný.", "It was hard. = byl tvrdý.", "It was broken. = byl zlomený.", "It was easy. = byl snadný."],
     options: ["It was loose.", "It was hard.", "It was broken.", "It was easy."],
     correct: 3,
     transcript: "The work didn't require much effort.",
     czTranscript: "Práce nevyžadovala mnoho úsilí.",
     expl: "Správná odpověď je d. Didn't require much effort = nevyžadovala úsilí = It was easy.",
-    distractors: [{"l": "A", "t": "It was loose.", "w": "volné"}, {"l": "B", "t": "It was hard.", "w": "těžká"}, {"l": "C", "t": "It was broken.", "w": "rozbitá"}]
-  },
+    distractors: [
+        {l:"A",t:"It was loose.",w:"volné"},
+        {l:"B",t:"It was hard.",w:"těžká"},
+        {l:"C",t:"It was broken.",w:"rozbitá"}
+      ]},
   {
     id: 48, part: "I", type: "listening",
+    czOptions: ["He has all of it now. = teď to má celé.", "He has as much as I have now. = teď má tolik, kolik já.", "He has more than I have now. = teď má více než já.", "He has less than I have now. = teď má méně než já."],
     options: ["He has all of it now.", "He has as much as I have now.", "He has more than I have now.", "He has less than I have now."],
     correct: 1,
     transcript: "David forgot his lunch, so I gave him half of mine.",
     czTranscript: "David zapomněl oběd, tak jsem mu dal polovinu svého.",
     expl: "Správná odpověď je b. Dal jsem mu polovinu svého → mám polovinu, on má polovinu = He has as much as I have now.",
-    distractors: [{"l": "A", "t": "He has all of it now.", "w": "má vše"}, {"l": "C", "t": "He has more than I have now.", "w": "má víc"}, {"l": "D", "t": "He has less than I have now.", "w": "méně"}]
-  },
+    distractors: [
+        {l:"A",t:"He has all of it now.",w:"má vše"},
+        {l:"C",t:"He has more than I have now.",w:"má víc"},
+        {l:"D",t:"He has less than I have now.",w:"méně"}
+      ]},
   {
     id: 49, part: "I", type: "listening",
+    czOptions: ["Examine it carefully. = pečlivě ho zkontrolujte.", "Check to see if it is all there. = zkontrolujte, zda je vše na místě.", "Get it out in a hurry. = rychle ho vytáhněte.", "Mail it on a routine basis. = pravidelně ho pošlete."],
     options: ["Examine it carefully.", "Check to see if it is all there.", "Get it out in a hurry.", "Mail it on a routine basis."],
     correct: 2,
     transcript: "Rush this order through.",
     czTranscript: "Vyřiďte tuto objednávku rychle.",
     expl: "Správná odpověď je c. Rush = spěchat, urychlit = Get it out in a hurry.",
-    distractors: [{"l": "A", "t": "Examine it carefully.", "w": "pečlivě zkontrolujte"}, {"l": "B", "t": "Check to see if it is all there.", "w": "zkontrolujte"}, {"l": "D", "t": "Mail it on a routine basis.", "w": "routinně odeslat"}]
-  },
+    distractors: [
+        {l:"A",t:"Examine it carefully.",w:"pečlivě zkontrolujte"},
+        {l:"B",t:"Check to see if it is all there.",w:"zkontrolujte"},
+        {l:"D",t:"Mail it on a routine basis.",w:"routinně odeslat"}
+      ]},
   {
     id: 50, part: "I", type: "listening",
+    czOptions: ["The school was open to all. = škola byla otevřena pro všechny.", "The school was very expensive. = škola byla velmi drahá.", "The school was closed for six years. = škola byla šest let zavřena.", "The school was six years old. = škola měla šest let."],
     options: ["The school was open to all.", "The school was very expensive.", "The school was closed for six years.", "The school was six years old."],
     correct: 0,
     transcript: "My daughter went to public school when she was six years old.",
     czTranscript: "Moje dcera chodila na veřejnou školu, když jí bylo šest let.",
     expl: "Správná odpověď je a. Public school = veřejná škola = The school was open to all.",
-    distractors: [{"l": "B", "t": "The school was very expensive.", "w": "drahá"}, {"l": "C", "t": "The school was closed for six years.", "w": "zavřená šest let"}, {"l": "D", "t": "The school was six years old.", "w": "šest let stará"}]
-  },
+    distractors: [
+        {l:"B",t:"The school was very expensive.",w:"drahá"},
+        {l:"C",t:"The school was closed for six years.",w:"zavřená šest let"},
+        {l:"D",t:"The school was six years old.",w:"šest let stará"}
+      ]},
   {
     id: 51, part: "I", type: "listening",
+    czOptions: ["He can't work at all. = vůbec nemůže pracovat.", "He can't do any lifting. = nemůže nic zvedat.", "He can't do any sitting. = nemůže sedět.", "He can't work at night. = nemůže pracovat v noci."],
     options: ["He can't work at all.", "He can't do any lifting.", "He can't do any sitting.", "He can't work at night."],
     correct: 1,
     transcript: "Since his illness, he can't do any heavy work.",
     czTranscript: "Od jeho nemoci nemůže dělat žádnou těžkou práci.",
     expl: "Správná odpověď je b. Heavy work = těžká práce = lifting (zvedání těžkých věcí).",
-    distractors: [{"l": "A", "t": "He can't work at all.", "w": "vůbec"}, {"l": "C", "t": "He can't do any sitting.", "w": "sedět"}, {"l": "D", "t": "He can't work at night.", "w": "v noci"}]
-  },
+    distractors: [
+        {l:"A",t:"He can't work at all.",w:"vůbec"},
+        {l:"C",t:"He can't do any sitting.",w:"sedět"},
+        {l:"D",t:"He can't work at night.",w:"v noci"}
+      ]},
   {
     id: 52, part: "I", type: "listening",
+    czOptions: ["It is expensive. = je drahý.", "It is black. = je černý.", "It is plentiful. = je hojný.", "It is rare. = je vzácný."],
     options: ["It is expensive.", "It is black.", "It is plentiful.", "It is rare."],
     correct: 2,
     transcript: "Oil is abundant in this state.",
     czTranscript: "Ropa je v tomto státě hojná.",
     expl: "Správná odpověď je c. Abundant = hojný, ve velkém množství = plentiful.",
-    distractors: [{"l": "A", "t": "It is expensive.", "w": "drahá"}, {"l": "B", "t": "It is black.", "w": "černá"}, {"l": "D", "t": "It is rare.", "w": "vzácná"}]
-  },
+    distractors: [
+        {l:"A",t:"It is expensive.",w:"drahá"},
+        {l:"B",t:"It is black.",w:"černá"},
+        {l:"D",t:"It is rare.",w:"vzácná"}
+      ]},
   {
     id: 53, part: "I", type: "listening",
+    czOptions: ["It was hard to see. = bylo těžké ho vidět.", "It was asleep. = bylo to spící.", "It was black. = bylo to černé.", "It was hard to hold. = bylo to těžké uchopit."],
     options: ["It was hard to see.", "It was asleep.", "It was black.", "It was hard to hold."],
     correct: 3,
     transcript: "Jack said the little animal was slippery.",
     czTranscript: "Jack řekl, že malé zvíře bylo kluzké.",
     expl: "Správná odpověď je d. Slippery = kluzký = It was hard to hold (těžko se drželo).",
-    distractors: [{"l": "A", "t": "It was hard to see.", "w": "těžko viditelné"}, {"l": "B", "t": "It was asleep.", "w": "spalo"}, {"l": "C", "t": "It was black.", "w": "černé"}]
-  },
+    distractors: [
+        {l:"A",t:"It was hard to see.",w:"těžko viditelné"},
+        {l:"B",t:"It was asleep.",w:"spalo"},
+        {l:"C",t:"It was black.",w:"černé"}
+      ]},
   {
     id: 54, part: "I", type: "listening",
+    czOptions: ["He was regretful. = byl lítostivý.", "He was resentful. = byl plný hořkosti.", "He was grateful. = byl vděčný.", "He was helpful. = byl nápomocný."],
     options: ["He was regretful.", "He was resentful.", "He was grateful.", "He was helpful."],
     correct: 2,
     transcript: "William thanked the woman for her help.",
     czTranscript: "William poděkoval ženě za pomoc.",
     expl: "Správná odpověď je c. Thanked = poděkoval → byl vděčný = grateful.",
-    distractors: [{"l": "A", "t": "He was regretful.", "w": "litoval"}, {"l": "B", "t": "He was resentful.", "w": "rozhořčený"}, {"l": "D", "t": "He was helpful.", "w": "byl nápomocný"}]
-  },
+    distractors: [
+        {l:"A",t:"He was regretful.",w:"litoval"},
+        {l:"B",t:"He was resentful.",w:"rozhořčený"},
+        {l:"D",t:"He was helpful.",w:"byl nápomocný"}
+      ]},
   {
     id: 55, part: "I", type: "listening",
+    czOptions: ["The accident happened under a bridge. = nehoda se stala pod mostem.", "The accident can be forgotten. = na nehodu lze zapomenout.", "The accident was your fault. = nehoda byla vaše chyba.", "Water caused the accident on the bridge. = voda způsobila nehodu na mostě."],
     options: ["The accident happened under a bridge.", "The accident can be forgotten.", "The accident was your fault.", "Water caused the accident on the bridge."],
     correct: 1,
     transcript: "Don't worry about the accident. It's all water under the bridge.",
     czTranscript: "Nestresuj se kvůli nehodě. To je všechno voda pod mostem.",
     expl: "Správná odpověď je b. Water under the bridge = idiom = věc z minulosti, na kterou se zapomnělo = The accident can be forgotten.",
-    distractors: [{"l": "A", "t": "The accident happened under a bridge.", "w": "stalo se pod mostem"}, {"l": "C", "t": "The accident was your fault.", "w": "tvá vina"}, {"l": "D", "t": "Water caused the accident on the bridge.", "w": "voda způsobila"}]
-  },
+    distractors: [
+        {l:"A",t:"The accident happened under a bridge.",w:"stalo se pod mostem"},
+        {l:"C",t:"The accident was your fault.",w:"tvá vina"},
+        {l:"D",t:"Water caused the accident on the bridge.",w:"voda způsobila"}
+      ]},
   {
     id: 56, part: "I", type: "listening",
+    czOptions: ["There was a high score. = bylo vysoké skóre.", "There was a large crowd. = byl velký dav.", "There was a fight. = byla rvačka.", "There was an important ceremony. = byl důležitý ceremoniál."],
     options: ["There was a high score.", "There was a large crowd.", "There was a fight.", "There was an important ceremony."],
     correct: 2,
     transcript: "There was a big rumpus during the hockey game. What happened during the game?",
     czTranscript: "Během hokejového zápasu byl velký povyk. Co se stalo během zápasu?",
     expl: "Správná odpověď je c. Rumpus = výtržnost, rvačka = There was a fight.",
-    distractors: [{"l": "A", "t": "There was a high score.", "w": "vysoké skóre"}, {"l": "B", "t": "There was a large crowd.", "w": "velký dav"}, {"l": "D", "t": "There was an important ceremony.", "w": "ceremonie"}]
-  },
+    distractors: [
+        {l:"A",t:"There was a high score.",w:"vysoké skóre"},
+        {l:"B",t:"There was a large crowd.",w:"velký dav"},
+        {l:"D",t:"There was an important ceremony.",w:"ceremonie"}
+      ]},
   {
     id: 57, part: "II", type: "listening",
+    czOptions: ["Golf is the most difficult sport for him. = golf je pro něj nejobtížnější sport.", "Golf is the sport he likes the most. = golf je sport, který má nejraději.", "Golf is the sport he is least interested in. = golf je sport, který ho nejméně zajímá.", "Golf is the sport he practices the most. = golf je sport, který nejvíce cvičí."],
     options: ["Golf is the most difficult sport for him.", "Golf is the sport he likes the most.", "Golf is the sport he is least interested in.", "Golf is the sport he practices the most."],
     correct: 1,
     transcript: "W: Do you like sports? M: Yes, I enjoy nearly all sports, but golf is my favorite. What does the man say about golf?",
     czTranscript: "Ž: Máš rád sport? M: Ano, baví mě téměř všechny sporty, ale golf je můj oblíbený. Co muž říká o golfu?",
     expl: "Správná odpověď je b. My favorite = můj oblíbený = Golf is the sport he likes the most.",
-    distractors: [{"l": "A", "t": "Golf is the most difficult sport for him.", "w": "nejtěžší"}, {"l": "C", "t": "Golf is the sport he is least interested in.", "w": "nejméně zajímá"}, {"l": "D", "t": "Golf is the sport he practices the most.", "w": "nejvíce trénuje"}]
-  },
+    distractors: [
+        {l:"A",t:"Golf is the most difficult sport for him.",w:"nejtěžší"},
+        {l:"C",t:"Golf is the sport he is least interested in.",w:"nejméně zajímá"},
+        {l:"D",t:"Golf is the sport he practices the most.",w:"nejvíce trénuje"}
+      ]},
   {
     id: 58, part: "II", type: "listening",
+    czOptions: ["poor = špatný", "very good = velmi dobrý", "incomplete = neúplný", "average = průměrný"],
     options: ["poor", "very good", "incomplete", "average"],
     correct: 1,
     transcript: "W: Do you know how well Michelle does her work? M: Michelle does excellent work. How is Michelle's work?",
     czTranscript: "Ž: Víš, jak dobře Michelle dělá svou práci? M: Michelle odvádí vynikající práci. Jaká je Michellina práce?",
     expl: "Správná odpověď je b. Excellent = vynikající = very good.",
-    distractors: [{"l": "A", "t": "poor", "w": "špatná"}, {"l": "C", "t": "incomplete", "w": "neúplná"}, {"l": "D", "t": "average", "w": "průměrná"}]
-  },
+    distractors: [
+        {l:"A",t:"poor",w:"špatná"},
+        {l:"C",t:"incomplete",w:"neúplná"},
+        {l:"D",t:"average",w:"průměrná"}
+      ]},
   {
     id: 59, part: "II", type: "listening",
+    czOptions: ["one that's not very long = není příliš dlouhý", "one that she thinks is true = myslí si, že je pravdivý", "one that she has heard before = slyšela ho dříve", "one that's not very old = není příliš starý"],
     options: ["one that's not very long", "one that she thinks is true", "one that she has heard before", "one that's not very old"],
     correct: 1,
     transcript: "M: Shall I tell you a story? W: Yes, but tell me one I can believe. What kind of story does the woman want to hear?",
     czTranscript: "M: Mám ti říct příběh? Ž: Ano, ale řekni mi takový, kterému mohu věřit. Jaký příběh chce žena slyšet?",
     expl: "Správná odpověď je b. One I can believe = takový, kterému mohu věřit = one that she thinks is true.",
-    distractors: [{"l": "A", "t": "one that's not very long", "w": "krátký"}, {"l": "C", "t": "one that she has heard before", "w": "slyšela dříve"}, {"l": "D", "t": "one that's not very old", "w": "starý"}]
-  },
+    distractors: [
+        {l:"A",t:"one that's not very long",w:"krátký"},
+        {l:"C",t:"one that she has heard before",w:"slyšela dříve"},
+        {l:"D",t:"one that's not very old",w:"starý"}
+      ]},
   {
     id: 60, part: "II", type: "listening",
+    czOptions: ["a car = auto", "the door = dveře", "a man = muž", "a dog = pes"],
     options: ["a car", "the door", "a man", "a dog"],
     correct: 2,
     transcript: "M: What is that noise? W: It must be the person next door. What is making the noise?",
     czTranscript: "M: Co je to za hluk? Ž: Musí to být soused. Co dělá hluk?",
     expl: "Správná odpověď je c. The person next door = soused = a man.",
-    distractors: [{"l": "A", "t": "a car", "w": "auto"}, {"l": "B", "t": "the door", "w": "dveře"}, {"l": "D", "t": "a dog", "w": "pes"}]
-  },
+    distractors: [
+        {l:"A",t:"a car",w:"auto"},
+        {l:"B",t:"the door",w:"dveře"},
+        {l:"D",t:"a dog",w:"pes"}
+      ]},
   {
     id: 61, part: "II", type: "listening",
+    czOptions: ["that they washed their shirts = vyprali si košile.", "that they removed their shirts = sundali si košile.", "that they arranged their shirts = uspořádali košile.", "that they recovered their shirts = vrátili si košile."],
     options: ["that they washed their shirts", "that they removed their shirts", "that they arranged their shirts", "that they recovered their shirts"],
     correct: 1,
     transcript: "W: And after that what did the soldiers do? M: They took off their shirts. What did the man say about the soldiers?",
     czTranscript: "Ž: A co pak vojáci dělali? M: Svlékli si košile. Co muž řekl o vojácích?",
     expl: "Správná odpověď je b. Took off their shirts = svlékli košile = they removed their shirts.",
-    distractors: [{"l": "A", "t": "that they washed their shirts", "w": "prali"}, {"l": "C", "t": "that they arranged their shirts", "w": "uklidili"}, {"l": "D", "t": "that they recovered their shirts", "w": "získali zpět"}]
-  },
+    distractors: [
+        {l:"A",t:"that they washed their shirts",w:"prali"},
+        {l:"C",t:"that they arranged their shirts",w:"uklidili"},
+        {l:"D",t:"that they recovered their shirts",w:"získali zpět"}
+      ]},
   {
     id: 62, part: "II", type: "listening",
+    czOptions: ["Some people get it after one year. = někteří to dostanou po roce.", "He can apply for it after one year. = může o to žádat po roce.", "He'll learn about it after one year. = dozví se o tom po roce.", "Everybody gets it after one year. = každý to dostane po roce."],
     options: ["Some people get it after one year.", "He can apply for it after one year.", "He'll learn about it after one year.", "Everybody gets it after one year."],
     correct: 3,
     transcript: "M: When do I get a raise? W: It's automatic after one year. What did the woman say about the raise?",
     czTranscript: "M: Kdy dostanu přidáno? Ž: Je to automatické po roce. Co žena řekla o zvýšení platu?",
     expl: "Správná odpověď je d. Automatic = automatické (pro všechny) = Everybody gets it after one year.",
-    distractors: [{"l": "A", "t": "Some people get it after one year.", "w": "někteří"}, {"l": "B", "t": "He can apply for it after one year.", "w": "může požádat"}, {"l": "C", "t": "He'll learn about it after one year.", "w": "dozví se"}]
-  },
+    distractors: [
+        {l:"A",t:"Some people get it after one year.",w:"někteří"},
+        {l:"B",t:"He can apply for it after one year.",w:"může požádat"},
+        {l:"C",t:"He'll learn about it after one year.",w:"dozví se"}
+      ]},
   {
     id: 63, part: "II", type: "listening",
+    czOptions: ["He thinks Sally can come. = myslí, že Sally může přijít.", "He hopes Sally can come. = doufá, že Sally může přijít.", "He doubts Sally can come. = pochybuje, že Sally může přijít.", "He knows Sally can come. = ví, že Sally může přijít."],
     options: ["He thinks Sally can come.", "He hopes Sally can come.", "He doubts Sally can come.", "He knows Sally can come."],
     correct: 0,
     transcript: "W: Can Sally come with us? M: I imagine so. What did the man say?",
     czTranscript: "Ž: Může Sally přijít s námi? M: Myslím, že ano. Co muž řekl?",
     expl: "Správná odpověď je a. I imagine so = myslím, že ano = He thinks Sally can come.",
-    distractors: [{"l": "B", "t": "He hopes Sally can come.", "w": "doufá"}, {"l": "C", "t": "He doubts Sally can come.", "w": "pochybuje"}, {"l": "D", "t": "He knows Sally can come.", "w": "ví"}]
-  },
+    distractors: [
+        {l:"B",t:"He hopes Sally can come.",w:"doufá"},
+        {l:"C",t:"He doubts Sally can come.",w:"pochybuje"},
+        {l:"D",t:"He knows Sally can come.",w:"ví"}
+      ]},
   {
     id: 64, part: "II", type: "listening",
+    czOptions: ["It was too short. = byl příliš krátký.", "He made too many errors. = udělal příliš mnoho chyb.", "It was very interesting. = byl velmi zajímavý.", "He used too many long words. = použil příliš mnoho dlouhých slov."],
     options: ["It was too short.", "He made too many errors.", "It was very interesting.", "He used too many long words."],
     correct: 0,
     transcript: "M: What was wrong with my speech? W: It was too brief. What did the woman mean?",
     czTranscript: "M: Co bylo špatného s mým projevem? Ž: Byl příliš stručný. Co žena myslela?",
     expl: "Správná odpověď je a. Brief = stručný, krátký = It was too short.",
-    distractors: [{"l": "B", "t": "He made too many errors.", "w": "chyby"}, {"l": "C", "t": "It was very interesting.", "w": "zajímavý"}, {"l": "D", "t": "He used too many long words.", "w": "dlouhá slova"}]
-  },
+    distractors: [
+        {l:"B",t:"He made too many errors.",w:"chyby"},
+        {l:"C",t:"It was very interesting.",w:"zajímavý"},
+        {l:"D",t:"He used too many long words.",w:"dlouhá slova"}
+      ]},
   {
     id: 65, part: "II", type: "listening",
+    czOptions: ["early in the morning = brzy ráno", "about midnight = kolem půlnoci", "late in the afternoon = pozdě odpoledne", "about noon = kolem poledne"],
     options: ["early in the morning", "about midnight", "late in the afternoon", "about noon"],
     correct: 0,
     transcript: "W: What time did you get home? M: I don't know, but the east was just barely light. When did the man get home?",
     czTranscript: "Ž: V kolik hodin jsi přišel domů? M: Nevím, ale na východě bylo sotva světlo. Kdy muž přišel domů?",
     expl: "Správná odpověď je a. East was just barely light = na východě bylo sotva světlo = brzo ráno = early in the morning.",
-    distractors: [{"l": "B", "t": "about midnight", "w": "kolem půlnoci"}, {"l": "C", "t": "late in the afternoon", "w": "pozdě odpoledne"}, {"l": "D", "t": "about noon", "w": "kolem poledne"}]
-  },
+    distractors: [
+        {l:"B",t:"about midnight",w:"kolem půlnoci"},
+        {l:"C",t:"late in the afternoon",w:"pozdě odpoledne"},
+        {l:"D",t:"about noon",w:"kolem poledne"}
+      ]},
   {
     id: 66, part: "II", type: "listening",
+    czOptions: ["look for the children = hledat děti", "watch for the children = dávat si pozor na děti", "look after the children = starat se o děti", "take the children away = odvést děti"],
     options: ["look for the children", "watch for the children", "look after the children", "take the children away"],
     correct: 2,
     transcript: "M: Why is Sally here this evening? W: She is going to take care of the children while we are at the party. What is Sally going to do?",
     czTranscript: "M: Proč je Sally dnes večer tady? Ž: Bude se starat o děti, zatímco budeme na párty. Co Sally udělá?",
     expl: "Správná odpověď je c. Take care of the children = starat se o děti = look after the children.",
-    distractors: [{"l": "A", "t": "look for the children", "w": "hledat děti"}, {"l": "B", "t": "watch for the children", "w": "hlídat na děti (čekat na ně)"}, {"l": "D", "t": "take the children away", "w": "odvést děti"}]
-  },
-  {
-    id: 67, part: "IV", type: "reading",
-    stem: "I __________ go to the movies if I had some money.",
-    options: ["had", "am", "have", "would"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. 2. kondicionál: If I had money (past simple) → I <u>would</u> go (would + infinitiv)."}, {"type": "rule", "text": "2. kondicionál (Second Conditional): If + past simple, would + infinitiv. Vyjadřuje nepravděpodobnou nebo hypotetickou situaci."}, {"type": "distractors", "items": ["a. had – minulý čas, nesprávný ve výsledné větě", "b. am – přítomný čas být, nesouvisí", "c. have – přítomný čas, not conditional"]}]
-  },
-  {
-    id: 68, part: "IV", type: "reading",
-    stem: "Their teacher gave _______________ a lot of homework.",
-    options: ["they", "our", "we", "them"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. Po slovesu gave (dát) následuje nepřímý objekt v akuzativu: <u>them</u> (jim)."}, {"type": "rule", "text": "Objekt (přímý/nepřímý) = akuzativní tvar zájmena: I→me, we→us, they→<u>them</u>. Nikdy podmětový tvar (they/we)."}, {"type": "distractors", "items": ["a. they – podmětový tvar, ne objektový", "b. our – přivlastňovací zájmeno", "c. we – podmětový tvar, ne objektový"]}]
-  },
-  {
-    id: 69, part: "IV", type: "reading",
-    stem: "It was spring __________ he moved to San Antonio.",
-    options: ["where", "why", "what", "when"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. Věta potřebuje časovou spojku: It was spring <u>when</u> he moved = bylo jaro, když se přestěhoval."}, {"type": "rule", "text": "When = časová spojka vyjadřující souběžnost dvou dějů. Where = místo, why = důvod, what = věc."}, {"type": "distractors", "items": ["a. where – místo, ne čas", "b. why – důvod, ne čas", "c. what – věc, ne čas"]}]
-  },
-  {
-    id: 70, part: "IV", type: "reading",
-    stem: "He said he was going to take a bath.",
-    options: ["He's going to walk.", "He's going to wash.", "He's going to eat.", "He's going to sleep."],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Take a bath = osprchovat se/vykoupat = <u>He's going to wash</u>."}, {"type": "rule", "text": "Take a bath = koupat se, mýt se = wash (oneself)."}, {"type": "distractors", "items": ["a. walk – chodit, nesouvisí s koupelí", "c. eat – jíst, nesouvisí", "d. sleep – spát, nesouvisí"]}]
-  },
-  {
-    id: 71, part: "IV", type: "reading",
-    stem: "He put his <u>bags</u> under his bed after he unpacked them.",
-    options: ["laundry", "shoes", "shirts", "suitcases"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. <u>Bags</u> v kontextu cestování a vybalování = <u>suitcases</u> (kufry)."}, {"type": "rule", "text": "Bags (travel bags) = luggage = suitcases. Unpack bags = vybalit kufry."}, {"type": "distractors", "items": ["a. laundry – prádlo k praní, nesouvisí s kufry", "b. shoes – boty, bags = kufry", "c. shirts – košile, bags = kufry"]}]
-  },
-  {
-    id: 72, part: "IV", type: "reading",
-    stem: "Soldiers are trained for combat, even when there is no _____________.",
-    options: ["time", "war", "signal", "army"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Combat = boj → trénují i bez <u>war</u> (války)."}, {"type": "rule", "text": "Logická vazba: combat training = příprava na boj/válku. Soldiers train for combat even when there is no war."}, {"type": "distractors", "items": ["a. time – čas, nesouvisí s combat", "c. signal – signál, nesouvisí", "d. army – armáda, vojáci jsou v armádě"]}]
-  },
-  {
-    id: 73, part: "IV", type: "reading",
-    stem: "The man is in <u>critical</u> condition.",
-    options: ["backward", "serious", "selected", "criminal"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. <u>Critical</u> condition = kritický stav = <u>serious</u> condition (vážný stav)."}, {"type": "rule", "text": "Critical condition = serious condition = vážný zdravotní stav (medicínský výraz)."}, {"type": "distractors", "items": ["a. backward – zpětný, jiný smysl", "c. selected – vybraný, jiný smysl", "d. criminal – kriminální, záměna critical s criminal"]}]
-  },
-  {
-    id: 74, part: "IV", type: "reading",
-    stem: "I think I will eat ______________ salad.",
-    options: ["any", "some", "many", "few"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Salad je nepočitatelné podstatné jméno → <u>some</u> (trochu, nějaký)."}, {"type": "rule", "text": "Some + nepočitatelné jméno = trochu (some water, some salad). Many/few se používají s počitatelnými podstatnými jmény."}, {"type": "distractors", "items": ["a. any – v záporných větách nebo otázkách", "c. many – pro počitatelná jm. (many books)", "d. few – pro počitatelná jm. (few friends)"]}]
-  },
-  {
-    id: 75, part: "IV", type: "reading",
-    stem: "The electrical system <u>furnishes</u> the electric power for the machine.",
-    options: ["The machine furnishes power to the electrical system.", "Electric power is furnished by the electrical system.", "The electrical system is powered by the machine.", "The machine of the electrical system is powerful."],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Pasivní transformace: The electrical system furnishes power → <u>Electric power is furnished by the electrical system.</u>"}, {"type": "rule", "text": "Aktivum → pasivum: subject + furnishes + object → object + is furnished by + subject."}, {"type": "distractors", "items": ["a. obráceně – machine furnishes to electrical system", "c. obráceně – electrical system je napájen strojem", "d. nesmyslná konstrukce"]}]
-  },
-  {
-    id: 76, part: "IV", type: "reading",
-    stem: "John danced with Mary ______________ the party.",
-    options: ["to", "at", "in", "with"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Dance <u>at</u> the party = tančit na párty. At + akce/událost."}, {"type": "rule", "text": "At se používá s událostmi a místy: at the party, at the concert, at the meeting."}, {"type": "distractors", "items": ["a. to – směr (go to the party), ne kde se tančí", "c. in – uvnitř prostoru (in the room)", "d. with – s někým (with Mary), ne párty"]}]
-  },
-  {
-    id: 77, part: "IV", type: "reading",
-    stem: "I still remember the place _____________ I first saw you.",
-    options: ["when", "where", "there", "which"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Relativní příslovce pro místo: the place <u>where</u> I first saw you."}, {"type": "rule", "text": "Where = relativní příslovce pro místo. The place where = místo, kde. When = čas, which = věc."}, {"type": "distractors", "items": ["a. when – čas, the place = místo", "c. there – příslovce, ne relativní spojka", "d. which – věci, not places (které)"]}]
-  },
-  {
-    id: 78, part: "IV", type: "reading",
-    stem: "The upper parts of the atmosphere are not completely empty. From the sun comes a constant stream of charged particles, traveling at tremendous speeds. When they collide with air molecules, some of their energy is released in the form of light known as an aurora. According to this paragraph, an aurora is caused by _____.",
-    options: ["light from the sun meeting the earth's atmosphere at an angle", "particles from the sun colliding with air molecules", "the attraction of air molecules by the earth's magnetic field", "the sun pulling air molecules away from the earth's magnetic field"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Text říká: charged particles from the sun collide with air molecules → energy released as light (aurora) = <u>particles from the sun colliding with air molecules</u>."}, {"type": "rule", "text": "Reading comprehension – přímá informace v textu. 'When they collide with air molecules, energy is released as light = aurora.'"}, {"type": "distractors", "items": ["a. light at an angle – text nezmiňuje úhel", "c. magnetic field – text nezmiňuje magnetické pole", "d. sun pulling molecules – text říká opak (částice přicházejí ze slunce)"]}]
-  },
-  {
-    id: 79, part: "IV", type: "reading",
-    stem: "Learning a second language requires a great deal of determination and effort. A person must concentrate on the material. The learner must immerse himself. According to this paragraph _____________.",
-    options: ["it is easy to learn a second language", "a person need only listen to learn a second language", "second language learning demands hard work", "occasional studying results in second language learning"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Text říká: requires determination and effort, must concentrate, must immerse = <u>demands hard work</u>."}, {"type": "rule", "text": "Reading comprehension – hlavní myšlenka. 'Great deal of determination and effort' = hard work."}, {"type": "distractors", "items": ["a. easy – text říká opak", "b. only listen – text říká musí concentrate a immerse", "d. occasional – text říká requires great deal of effort"]}]
-  },
-  {
-    id: 80, part: "IV", type: "reading",
-    stem: "We made good time traveling because the _____ on the highway was light.",
-    options: ["congestion", "traffic", "direction", "control"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Light traffic = malý provoz → dobrý čas na cestě = <u>traffic</u> (provoz)."}, {"type": "rule", "text": "Traffic was light = provoz byl řídký → jeli rychle. Light traffic = málo aut na silnici."}, {"type": "distractors", "items": ["a. congestion – zácpa, ale congestion was light = light traffic = nízká hustota provozu; traffic je přesnější", "c. direction – směr, nelze 'light direction'", "d. control – kontrola, nelze 'light control'"]}]
-  },
-  {
-    id: 81, part: "IV", type: "reading",
-    stem: "Miss Garcia did the job <u>properly</u>.",
-    options: ["with the wrong tools", "in a short time", "with some other people", "in the right way"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. <u>Properly</u> = správně, náležitě = in the right way."}, {"type": "rule", "text": "Properly = correctly = in the right/correct way = správným způsobem."}, {"type": "distractors", "items": ["a. wrong tools – špatné nástroje, properly = správně", "b. in a short time – quickly, properly = správně", "c. with other people – nesouvisí s properly"]}]
-  },
-  {
-    id: 82, part: "IV", type: "reading",
-    stem: "I'd like to go to the air show next week, but I can't make it.",
-    options: ["I'm going to the air show.", "I don't care about the air show.", "I want to go, but I'm going to be busy.", "The air show took place last week."],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Can't make it = nemůžu přijít/zúčastnit se = <u>I want to go, but I'm going to be busy.</u>"}, {"type": "rule", "text": "Can't make it = unable to attend = nemůžu se zúčastnit. I'd like to go (chci) + but can't make it (ale nemůžu) = chci jít, ale budu zaneprázdněn."}, {"type": "distractors", "items": ["a. I'm going – opak (can't make it = nejde)", "b. I don't care – I'd like to = chci jít", "d. last week – next week, ne last week"]}]
-  },
-  {
-    id: 83, part: "IV", type: "reading",
-    stem: "After the 15-minute aural examination, the students will take the 20-minute written test.",
-    options: ["The aural exam requires 20 minutes.", "The written test takes 15 minutes.", "The written test follows the aural test.", "The aural exam follows the written test."],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. After the aural exam → written test = <u>The written test follows the aural test.</u>"}, {"type": "rule", "text": "After X = po X → Y follows X. After aural exam, students take written test = written test follows aural test."}, {"type": "distractors", "items": ["a. 20 minutes aural – aural trvá 15 minut", "b. 15 minutes written – written trvá 20 minut", "d. aural follows written – opak pořadí"]}]
-  },
-  {
-    id: 84, part: "IV", type: "reading",
-    stem: "The workers were packing the _____________ fruit into boxes.",
-    options: ["for drying", "which dries", "dried", "dries"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Přívlastek před podstatným jménem: <u>dried</u> fruit = sušené ovoce (past participle jako adjektivum)."}, {"type": "rule", "text": "Past participle jako přídavné jméno: dried fruit = sušené ovoce, frozen food = mražené jídlo."}, {"type": "distractors", "items": ["a. for drying – infinitivní fráze, nevhodná jako přívlastek", "b. which dries – relativní věta, odkazuje na fruit (sušení)", "d. dries – přítomný čas 3. os. j.č., ne přívlastek"]}]
-  },
-  {
-    id: 85, part: "IV", type: "reading",
-    stem: "Don't light a match. The gasoline fumes ______________ explode.",
-    options: ["ought to", "must", "have to", "will"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. Benzínové výpary při zapálení zápalky explodují = jistá budoucnost = <u>will</u> explode."}, {"type": "rule", "text": "Will vyjadřuje jistou budoucnost nebo přirozený výsledek: benzín + oheň = vždy exploduje. Must/have to = povinnost, ought to = doporučení."}, {"type": "distractors", "items": ["a. ought to – doporučení, výbuch není doporučení", "b. must – povinnost, výbuch není povinnost", "c. have to – nutnost/povinnost, výbuch je fyzikální zákon"]}]
-  },
-  {
-    id: 86, part: "IV", type: "reading",
-    stem: "What flowers are you _____________ in your garden?",
-    options: ["fertilized", "fertilizes", "fertilizing", "fertilize"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Are you + gerundium/přítomné příčestí: are you <u>fertilizing</u>? (Přítomný průběhový čas.)"}, {"type": "rule", "text": "Přítomný průběhový čas: am/is/are + -ing. What are you doing? → What are you fertilizing?"}, {"type": "distractors", "items": ["a. fertilized – minulé příčestí, po are you nevhodné", "b. fertilizes – 3. os. j.č. přítomného času", "d. fertilize – základní tvar, po are you nevhodný"]}]
-  },
-  {
-    id: 87, part: "IV", type: "reading",
-    stem: "The helicopter was forced ______________ an emergency landing.",
-    options: ["made", "making", "make", "to make"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. Force somebody <u>to do</u> something = donutit k čemu. Was forced <u>to make</u> = byl donucen provést."}, {"type": "rule", "text": "Force + to-infinitiv: be forced to do something = být donucen udělat. Pasivum: was forced to make."}, {"type": "distractors", "items": ["a. made – past tense, po forced nevhodné", "b. making – gerundium, force vyžaduje to-infinitiv", "c. make – bez 'to', po force nevhodné"]}]
-  },
-  {
-    id: 88, part: "IV", type: "reading",
-    stem: "This piece of wire must be <u>insulated</u>.",
-    options: ["cooled", "soldered", "covered", "cut"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. <u>Insulated</u> = izolovaný (pokrytý ochranným materiálem) = <u>covered</u>."}, {"type": "rule", "text": "Insulate = to cover with insulating material = zakrýt izolačním materiálem = covered. Drát musí být izolovaný = pokrytý."}, {"type": "distractors", "items": ["a. cooled – ochlazený, insulated = izolovaný", "b. soldered – pájený (spájení kovů), jiný smysl", "d. cut – přestřihnout, jiný smysl"]}]
-  },
-  {
-    id: 89, part: "IV", type: "reading",
-    stem: "The entrance was narrow. It was __________.",
-    options: ["not high", "crowded", "not wide", "loose"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Narrow = úzký = <u>not wide</u>."}, {"type": "rule", "text": "Narrow = not wide = úzký. Antonym: wide = wide. The entrance was narrow = not wide."}, {"type": "distractors", "items": ["a. not high – nízký, narrow = úzký (šírka, ne výška)", "b. crowded – přeplněný, narrow = úzký", "d. loose – volný, narrow = úzký"]}]
-  },
-  {
-    id: 90, part: "IV", type: "reading",
-    stem: "The soldiers fought _________ sunset.",
-    options: ["in", "until", "by means of", "in spite of"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Fought <u>until</u> sunset = bojovali až do západu slunce."}, {"type": "rule", "text": "Until = až do (časová mez). Fought until sunset = bojovali do doby, než zapadlo slunce."}, {"type": "distractors", "items": ["a. in sunset – nesprávná předložka pro časovou mez", "c. by means of – pomocí, nesouvisí s časem", "d. in spite of – navzdory, nesouvisí s časem"]}]
-  },
-  {
-    id: 91, part: "IV", type: "reading",
-    stem: "Volcanoes, with all their fire and smoke, are some of the earth's greatest builders. New islands have been made by volcanoes erupting. On the other hand, some island volcanoes have blown their tops off and the islands have disappeared. One such island disappeared, then reappeared in 1913, and finally in 1949, after an explosion, vanished again. According to this paragraph ______.",
-    options: ["new islands are made by volcanic eruptions", "volcanoes made all the islands", "volcanic eruptions occur every year", "an island appeared in 1949"],
-    correct: "A",
-    expl: [{"type": "correct", "text": "Správná odpověď je a. Text říká: 'New islands have been made by volcanoes erupting' = <u>new islands are made by volcanic eruptions</u>."}, {"type": "rule", "text": "Reading comprehension – přímá informace z textu. 'New islands have been made by volcanoes erupting.'"}, {"type": "distractors", "items": ["b. all islands – text říká 'some', ne 'all'", "c. every year – text nezmiňuje pravidelnost", "d. appeared in 1949 – v roce 1949 ostrov znovu zmizel (vanished)"]}]
-  },
-  {
-    id: 92, part: "IV", type: "reading",
-    stem: "You should go on sick call right away. You should __________.",
-    options: ["go to the right", "go at once", "walk straight", "run away"],
-    correct: "B",
-    expl: [{"type": "correct", "text": "Správná odpověď je b. Right away = ihned, hned = <u>go at once</u>."}, {"type": "rule", "text": "Right away = at once = immediately = ihned. Jdi ihned na ošetřovnu."}, {"type": "distractors", "items": ["a. go to the right – doprava, right away = ihned", "c. walk straight – rovně, right away = ihned", "d. run away – utéct, right away = ihned jdi"]}]
-  },
-  {
-    id: 93, part: "IV", type: "reading",
-    stem: "The deer _____________ the fence to get into the vegetable garden.",
-    options: ["arranged to", "climbed into", "leaped over", "stood up"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Jelen překonal plot skokem = <u>leaped over</u> the fence."}, {"type": "rule", "text": "Leap over = přeskočit (skokem). Jeleni přeskakují ploty. Leaped over the fence = přeskočil plot."}, {"type": "distractors", "items": ["a. arranged to – domluvil se, nesmyslné pro jelena", "b. climbed into – vlezl dovnitř, jeleni nešplhají", "d. stood up – vstával, nesouvisí s překonáním plotu"]}]
-  },
-  {
-    id: 94, part: "IV", type: "reading",
-    stem: "Our teacher didn't come so we ___________ to go home.",
-    options: ["told", "were telling", "were told", "tell"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Pasivum minulého času: we <u>were told</u> = bylo nám řečeno (někdo nám řekl, abychom šli domů)."}, {"type": "rule", "text": "Pasivum minulého: was/were + past participle. Were told = bylo nám řečeno. (Nevíme kdo řekl.)"}, {"type": "distractors", "items": ["a. told – aktivum, my bychom říkali jiným", "b. were telling – průběhové aktivum, my bychom říkali", "d. tell – přítomný čas, věta je v minulosti"]}]
-  },
-  {
-    id: 95, part: "IV", type: "reading",
-    stem: "When did you last hear __________ your mother-in-law?",
-    options: ["from", "until", "concerning", "by"],
-    correct: "A",
-    expl: [{"type": "correct", "text": "Správná odpověď je a. Hear <u>from</u> someone = dostat zprávu od někoho = hear from your mother-in-law."}, {"type": "rule", "text": "Hear from = dostat zprávy od (písmem nebo telefonem). Hear about = slyšet o někom/něčem."}, {"type": "distractors", "items": ["b. until – do (časová mez), hear until = nesprávné", "c. concerning – o (hear concerning = hear about)", "d. by – od (agent), ale hear from = dostat zprávu"]}]
-  },
-  {
-    id: 96, part: "IV", type: "reading",
-    stem: "I may _____________ if I get behind.",
-    options: ["not catch up be able to", "be not able to catch up", "not be able to catch up", "be able to not catch up"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Správné pořadí záporného modálního: may <u>not be able to catch up</u> = nemusím být schopen dohnat."}, {"type": "rule", "text": "Záporný modální výraz: may + not + be able to + infinitiv. Záporné 'not' stojí za modálním slovesem, před 'be able to'."}, {"type": "distractors", "items": ["a. not catch up be able to – nesprávný slovosled", "b. be not able to – 'not' musí stát za modálním may", "d. be able to not catch up – 'not' musí stát před 'be able to'"]}]
-  },
-  {
-    id: 97, part: "IV", type: "reading",
-    stem: "The windshield wipers are not working properly.",
-    options: ["They do not wipe the windshield.", "The windshield wipers do not clean the dashboard.", "They do not work the generator.", "The windshield doesn't have wipers."],
-    correct: "A",
-    expl: [{"type": "correct", "text": "Správná odpověď je a. Windshield wipers not working = stěrače nefungují = <u>They do not wipe the windshield.</u>"}, {"type": "rule", "text": "Windshield wipers = stěrače (čelního skla). Not working properly = nefungují správně = nečistí sklo."}, {"type": "distractors", "items": ["b. dashboard – přístrojová deska, stěrače čistí sklo", "c. generator – generátor, stěrače netvoří elektřinu", "d. doesn't have wipers – věta říká wipers are not working, ne že neexistují"]}]
-  },
-  {
-    id: 98, part: "IV", type: "reading",
-    stem: "Carol: Didn't that used car you looked at have bad tires? Melinda: Yes, but it was such a good deal that I bought it _____________ them.",
-    options: ["because of", "in regard to", "in spite of", "in addition to"],
-    correct: "C",
-    expl: [{"type": "correct", "text": "Správná odpověď je c. Koupila navzdory špatným pneumatikám = <u>in spite of</u> them (navzdory nim)."}, {"type": "rule", "text": "In spite of = despite = navzdory. Koupila auto in spite of bad tires = navzdory špatným pneumatikám."}, {"type": "distractors", "items": ["a. because of – kvůli, opak (koupila kvůli, ne navzdory)", "b. in regard to – ohledně, nesouvisí", "d. in addition to – navíc k, jiný smysl"]}]
-  },
-  {
-    id: 99, part: "IV", type: "reading",
-    stem: "All the food here is good, but I've always been part_____________ to the Crab Alfredo.",
-    options: ["-iality", "-ible", "-icle", "-ial"],
-    correct: "D",
-    expl: [{"type": "correct", "text": "Správná odpověď je d. Part + <u>-ial</u> = partial = zaujatý, zvýhodňující. Be partial to = mít slabost pro."}, {"type": "rule", "text": "Partial to = have a preference for = mít slabost pro. I've always been partial to Crab Alfredo = vždy mi to chutnalo nejvíce."}, {"type": "distractors", "items": ["a. -iality → partiality (podstatné jméno), ne přídavné", "b. -ible → partible (dělitelný), jiný smysl", "c. -icle → particle (částice), jiný smysl"]}]
-  },
-  {
-    id: 100, part: "IV", type: "reading",
-    stem: "There was no _____________ evidence that Carl had committed the crime.",
-    options: ["tangible", "pungent", "generic", "successive"],
-    correct: "A",
-    expl: [{"type": "correct", "text": "Správná odpověď je a. <u>Tangible</u> evidence = hmatatelné, konkrétní důkazy. No tangible evidence = žádné konkrétní důkazy."}, {"type": "rule", "text": "Tangible = real, concrete, measurable = hmatatelný, konkrétní. Tangible evidence = konkrétní/hmotné důkazy."}, {"type": "distractors", "items": ["b. pungent – ostrý (zápach), nesouvisí s důkazy", "c. generic – obecný, rodový, jiný smysl", "d. successive – po sobě jdoucí, jiný smysl"]}]
-  }
+    distractors: [
+        {l:"A",t:"look for the children",w:"hledat děti"},
+        {l:"B",t:"watch for the children",w:"hlídat na děti (čekat na ně)"},
+        {l:"D",t:"take the children away",w:"odvést děti"}
+      ]}
 ];
 
 const partMeta = {
-  'I':  {title:'Part I — Listening', desc:'Q1–56: You will hear statements and questions. Select the best answer.'},
-  'II':{title:'Part II — Listening (Conversations)', desc:'Q57–66: You will hear conversations. Select the best answer.'},
-  'IV': {title:'Part III — Reading', desc:'Q67–100: Choose the best answer.'}
+  'I':  {title:'Part I — Listening', desc:'Q1–25: You will hear questions. Select the one correct answer.'},
+  'II': {title:'Part II — Listening', desc:'Q26–50: You will hear statements. Select the one correct answer.'},
+  'III':{title:'Part III — Listening (Dialogues)', desc:'Q51–60: You will hear dialogues. Select the one correct answer.'},
+  'IV': {title:'Part IV — Reading', desc:'Q61–100: Choose the one correct answer.'}
 };
 
 let answered = {}, scores = {I:0,II:0,III:0,IV:0,total:0}, counts = {I:0,II:0,III:0,IV:0,total:0};
@@ -1094,13 +1125,25 @@ function buildTest() {
     }
 
     const isListening = q.type === 'listening';
-    let stemHtml = q.type === 'reading'
-      ? q.stem.replace(/_{3,}|_____/, '<span style="display:inline-block;min-width:60px;border-bottom:2px solid var(--blue);text-align:center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>')
+    const blankSpan = '<span style="display:inline-block;min-width:60px;border-bottom:2px solid var(--blue);text-align:center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+    let stemHtml = q.stem
+      ? q.stem.replace(/_{3,}/, blankSpan)
       : '&nbsp;';
+    const hasStem = !!q.stem;
 
     const opts = q.options.map((opt, i) => {
       const letter = 'ABCD'[i];
-      const display = q.type === 'reading' ? opt : `${letter.toLowerCase()}. ${opt}`;
+      let display;
+      if (q.type === 'reading') {
+        const hasBlank = q.stem && /_{3,}/.test(q.stem);
+        const stripped = opt.replace(/^[a-d]\. */, '');
+        display = hasBlank ? stripped.charAt(0).toLowerCase() + stripped.slice(1) : stripped;
+      } else {
+        display = hasStem ? opt.charAt(0).toLowerCase() + opt.slice(1) : opt;
+      }
+
+
+
       return `<div class="q-option" id="opt_${q.id}_${i}" onclick="answer(${q.id},${i})">
         <span class="opt-letter">${letter}</span>
         <span class="opt-text">${display}</span>
@@ -1117,10 +1160,12 @@ function buildTest() {
     // Build explanation
     let explInner = '';
     if (q.type === 'listening') {
-      explInner += `<div class="expl-correct">${q.expl}</div>`;
-      if (q.distractors && q.distractors.length) {
-        q.distractors.forEach(d => {
-          explInner += `<div class="expl-dist"><strong>${d.l}.</strong> ${d.t} — ${d.w}</div>`;
+      explInner += `<div class="expl-transcript"><div class="expl-tr-en">${q.transcript}</div><div class="expl-tr-cz">${q.czTranscript}</div></div>`;
+      if (q.czOptions) {
+        const letters = ['A','B','C','D'];
+        q.czOptions.forEach((cz, i) => {
+          const cls = i === q.correct ? 'expl-correct' : 'expl-dist';
+          explInner += `<div class="${cls}"><strong>${letters[i]}.</strong> ${cz}</div>`;
         });
       }
     } else {
@@ -1159,8 +1204,7 @@ function answer(qid, idx) {
   if (answered[qid] !== undefined) return;
   const q = questions.find(x => x.id === qid);
   if (!q) return;
-  const correctIdx = typeof q.correct === "string" ? "ABCD".indexOf(q.correct) : q.correct;
-  const isCorrect = idx === correctIdx;
+  const isCorrect = idx === q.correct;
   answered[qid] = idx;
   counts[q.part]++; counts.total++;
   if (isCorrect) { scores[q.part]++; scores.total++; }
@@ -1172,7 +1216,7 @@ function answer(qid, idx) {
   q.options.forEach((_, i) => {
     const el = document.getElementById(`opt_${qid}_${i}`);
     el.classList.add('locked');
-    if (i === correctIdx) el.classList.add('opt-correct');
+    if (i === q.correct) el.classList.add('opt-correct');
     else if (i === idx && !isCorrect) el.classList.add('opt-wrong');
   });
 
@@ -1200,8 +1244,8 @@ function showResults() {
   const pct = (scores.total / 100 * 100).toFixed(1);
   document.getElementById('scoreSub').textContent = pct + '% correct';
 
-  const partNames = {I:'Part I (Q1–56)',III:'Part II (Q57–66)',IV:'Part III (Q67–100)'};
-  const partMax  = {I:56,III:10,IV:34};
+  const partNames = {I:'Part I (Q1–25)',II:'Part II (Q26–50)',III:'Part III (Q51–60)',IV:'Part IV (Q61–100)'};
+  const partMax  = {I:25,II:25,III:10,IV:40};
   document.getElementById('scoreParts').innerHTML = ['I','II','III','IV'].map(p =>
     `<div class="score-part"><div class="val">${scores[p]}/${partMax[p]}</div><div class="lbl">${partNames[p]}</div></div>`
   ).join('');
