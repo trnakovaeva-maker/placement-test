@@ -1001,16 +1001,16 @@ const questions = [
   },
   {
     id: 55, part: "III", type: "listening",
-    czOptions: ["They were very high. = byly velmi vysoké.", "They were the highest. = byly nejvyšší.", "They were not too high. = nebyly příliš vysoké.", "They were not priced. = neměly cenu."],
-    options: ["They were very high.", "They were the highest.", "They were not too high.", "They were not priced."],
+    czOptions: ["The rates are too high. = ceny jsou příliš vysoké.", "The rates are too low. = ceny jsou příliš nízké.", "The rates are fair. = ceny jsou přiměřené.", "The rates are unreasonable. = ceny jsou nepřiměřené."],
+    options: ["The rates are too high.", "The rates are too low.", "The rates are fair.", "The rates are unreasonable."],
     correct: 2,
     transcript: "A: \"How are the prices in that hotel?\" B: \"The rates are very reasonable.\" What did the man say about the rates?",
     czTranscript: "A: 'Jaké jsou ceny v tom hotelu?' B: 'Sazby jsou velmi přiměřené.'",
     expl: "'Reasonable' = přiměřené = ne příliš vysoké → správná odpověď: c. They were not too high.",
     distractors: [
-        {l:"A",t:"They were very high.",w:"byly velmi vysoké (opak)"},
-        {l:"B",t:"They were the highest.",w:"byly nejvyšší (opak)"},
-        {l:"D",t:"They were not priced.",w:"neměly cenu"}
+        {l:"A",t:"The rates are too high.",w:"byly velmi vysoké (opak)"},
+        {l:"B",t:"The rates are too low.",w:"byly nejvyšší (opak)"},
+        {l:"D",t:"The rates are unreasonable.",w:"neměly cenu"}
       ]
   },
   {
@@ -1311,10 +1311,10 @@ const questions = [
   {
     id: 86, part: "IV", type: "reading",
     stem: "Parents have a great __________ to their children.",
-    options: ["responsibility", "responsible", "responsive", "responsing"],
+    options: ["responsibility", "responsible", "responsive", "responding"],
     correct: "0",
     expl: [
-    {type:"correct",text:"Správná odpověď je a. responsibility. Celá věta zní: Parents have a great responsibility to their children. (Rodiče mají vůči svým dětem velkou zodpovědnost.) Tato otázka testuje slovní druhy ze stejného slovního základu (word family).<br>Slovní rodina od 'respond':<br>• responsibility (podstatné jméno) – zodpovědnost ✓<br>• responsible (přídavné jméno) – zodpovědný<br>• responsive (přídavné jméno) – vnímavý, reagující<br>Po 'a great' potřebujeme podstatné jméno.<br>Proč ostatní možnosti nesedí:<br>• b. responsible – přídavné jméno; po 'a great' stojí podstatné jméno, ne přídavné.<br>• c. responsive – přídavné jméno; stejný problém jako b.<br>• d. responsing – neexistující slovo v angličtině."}
+    {type:"correct",text:"Správná odpověď je a. responsibility. Celá věta zní: Parents have a great responsibility to their children. (Rodiče mají vůči svým dětem velkou zodpovědnost.) Tato otázka testuje slovní druhy ze stejného slovního základu (word family).<br>Slovní rodina od 'respond':<br>• responsibility (podstatné jméno) – zodpovědnost ✓<br>• responsible (přídavné jméno) – zodpovědný<br>• responsive (přídavné jméno) – vnímavý, reagující<br>Po 'a great' potřebujeme podstatné jméno.<br>Proč ostatní možnosti nesedí:<br>• b. responsible – přídavné jméno; po 'a great' stojí podstatné jméno, ne přídavné.<br>• c. responsive – přídavné jméno; stejný problém jako b.<br>• d. responding – neexistující slovo v angličtině."}
   ]
   },
   {
@@ -1477,9 +1477,7 @@ function buildTest() {
       const letter = 'ABCD'[i];
       let display;
       if (q.type === 'reading') {
-        const hasBlank = q.stem && /_{3,}/.test(q.stem);
-        const stripped = opt.replace(/^[a-d]\. */, '');
-        display = hasBlank ? stripped.charAt(0).toLowerCase() + stripped.slice(1) : stripped;
+        display = opt.replace(/^[a-d]\. */, '');
       } else {
         display = hasStem ? opt.charAt(0).toLowerCase() + opt.slice(1) : opt;
       }
@@ -1506,7 +1504,7 @@ function buildTest() {
       if (q.czOptions) {
         const letters = ['A','B','C','D'];
         q.czOptions.forEach((cz, i) => {
-          const cls = i === q.correct ? 'expl-correct' : 'expl-dist';
+          const cls = i === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct) ? 'expl-correct' : 'expl-dist';
           explInner += `<div class="${cls}"><strong>${letters[i]}.</strong> ${cz}</div>`;
         });
       }
@@ -1546,7 +1544,7 @@ function answer(qid, idx) {
   if (answered[qid] !== undefined) return;
   const q = questions.find(x => x.id === qid);
   if (!q) return;
-  const isCorrect = idx === q.correct;
+  const isCorrect = idx === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct);
   answered[qid] = idx;
   counts[q.part]++; counts.total++;
   if (isCorrect) { scores[q.part]++; scores.total++; }
@@ -1558,7 +1556,7 @@ function answer(qid, idx) {
   q.options.forEach((_, i) => {
     const el = document.getElementById(`opt_${qid}_${i}`);
     el.classList.add('locked');
-    if (i === q.correct) el.classList.add('opt-correct');
+    if (i === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct)) el.classList.add('opt-correct');
     else if (i === idx && !isCorrect) el.classList.add('opt-wrong');
   });
 
