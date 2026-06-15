@@ -177,6 +177,8 @@
   .expl-correct { color: var(--green); font-weight: 600; margin-bottom: 5px; }
     .expl-correct-label { color: var(--green); font-weight: 600; margin-bottom: 4px; }
     .expl-text { color: var(--gray-700); margin-bottom: 5px; }
+    .expl-correct-label { color: var(--green); font-weight: 600; margin-bottom: 4px; }
+    .expl-text { color: var(--gray-700); margin-bottom: 5px; }
   .expl-rule { color: var(--navy-mid); margin-bottom: 5px; }
   .expl-dist { color: var(--red); font-size: 0.79rem; margin-top: 2px; }
 
@@ -1205,9 +1207,9 @@ const questions = [
     id: 83, part: "IV", type: "reading",
     stem: "Did Mary _______ go home early?",
     options: ["has to", "have to", "had to", "having to"],
-    correct: "2",
+    correct: "1",
     expl: [
-    {type:"correct",text:"Správná odpověď je c. had to. Otázka 'Did Mary go home early?' předpokládá důvod v minulosti. 'Had to' = musela (minulá povinnost) → správná odpověď: c. had to.<br>HAD TO = musela (minulý čas):<br>• She had to go home early. ✓<br>• After 'Did she have to?': Yes, she had to.<br>Minulý čas od 'must/have to' = had to<br>Proč ostatní možnosti nesedí:<br>• a. has to – Přítomný čas (musí); otázka je v minulém čase ('did').<br>• b. have to – Základní tvar; po 'did' by bylo 'have to', ale odpověď je kladná věta.<br>• d. having to – Gerundium; nefunguje jako přísudek."}
+    {type:"correct",text:"Správná odpověď je b. have to. V otázce s 'Did' se používá základní tvar slovesa → 'Did Mary have to go home early?' HAVE TO = muset (povinnost).<br>• Did she have to go? ✓ (správný tvar s Did)<br>• Has to = přítomný čas 3. os. sg.<br>• Had to = minulý čas (bez Did)<br>• Having to = -ing tvar<br>to' = had to<br>Proč ostatní možnosti nesedí:<br>• a. has to – Přítomný čas (musí); otázka je v minulém čase ('did').<br>• b. have to – Základní tvar; po 'did' by bylo 'have to', ale odpověď je kladná věta.<br>• d. having to – Gerundium; nefunguje jako přísudek."}
   ]},
   {
     id: 84, part: "IV", type: "reading",
@@ -1406,7 +1408,7 @@ function buildTest() {
       if (q.czOptions) {
         const letters = ['A','B','C','D'];
         q.czOptions.forEach((cz, i) => {
-          const cls = i === q.correct ? 'expl-correct' : 'expl-dist';
+          const cls = i === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct) ? 'expl-correct' : 'expl-dist';
           explInner += `<div class="${cls}"><strong>${letters[i]}.</strong> ${cz}</div>`;
         });
       }
@@ -1453,7 +1455,7 @@ function answer(qid, idx) {
   if (answered[qid] !== undefined) return;
   const q = questions.find(x => x.id === qid);
   if (!q) return;
-  const isCorrect = idx === q.correct;
+  const isCorrect = idx === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct);
   answered[qid] = idx;
   counts[q.part]++; counts.total++;
   if (isCorrect) { scores[q.part]++; scores.total++; }
@@ -1465,7 +1467,7 @@ function answer(qid, idx) {
   q.options.forEach((_, i) => {
     const el = document.getElementById(`opt_${qid}_${i}`);
     el.classList.add('locked');
-    if (i === q.correct) el.classList.add('opt-correct');
+    if (i === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct)) el.classList.add('opt-correct');
     else if (i === idx && !isCorrect) el.classList.add('opt-wrong');
   });
 
