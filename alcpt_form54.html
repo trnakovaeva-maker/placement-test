@@ -222,7 +222,7 @@
       <svg viewBox="0 0 20 20"><path d="M13 4l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
       All Forms
     </a>
-    <span class="player-title">ALCPT <span>26</span></span>
+    <span class="player-title">ALCPT <span>54</span></span>
     <div class="player-controls">
       <button class="btn-playpause" id="btnPlay" onclick="togglePlay()" title="Play / Pause">
         <svg id="iconPlay" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -1304,7 +1304,7 @@ function buildTest() {
       if (q.czOptions) {
         const letters = ['A','B','C','D'];
         q.czOptions.forEach((cz, i) => {
-          const cls = i === q.correct ? 'expl-correct' : 'expl-dist';
+          const cls = i === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct) ? 'expl-correct' : 'expl-dist';
           explInner += `<div class="${cls}"><strong>${letters[i]}.</strong> ${cz}</div>`;
         });
       }
@@ -1351,7 +1351,7 @@ function answer(qid, idx) {
   if (answered[qid] !== undefined) return;
   const q = questions.find(x => x.id === qid);
   if (!q) return;
-  const isCorrect = idx === q.correct;
+  const isCorrect = idx === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct);
   answered[qid] = idx;
   counts[q.part]++; counts.total++;
   if (isCorrect) { scores[q.part]++; scores.total++; }
@@ -1363,7 +1363,7 @@ function answer(qid, idx) {
   q.options.forEach((_, i) => {
     const el = document.getElementById(`opt_${qid}_${i}`);
     el.classList.add('locked');
-    if (i === q.correct) el.classList.add('opt-correct');
+    if (i === (typeof q.correct === 'string' ? parseInt(q.correct) : q.correct)) el.classList.add('opt-correct');
     else if (i === idx && !isCorrect) el.classList.add('opt-wrong');
   });
 
